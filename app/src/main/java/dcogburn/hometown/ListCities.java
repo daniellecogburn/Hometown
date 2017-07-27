@@ -2,49 +2,47 @@ package dcogburn.hometown;
 
 import android.Manifest;
 import android.content.Context;
+import android.content.Intent;
 import android.content.pm.PackageManager;
-import android.location.Address;
-import android.location.Geocoder;
 import android.location.Location;
 import android.location.LocationListener;
 import android.location.LocationManager;
-import android.os.AsyncTask;
 import android.os.Bundle;
-import android.support.design.widget.FloatingActionButton;
-import android.support.design.widget.Snackbar;
 import android.support.v4.app.ActivityCompat;
-import android.support.v4.content.ContextCompat;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
 import android.util.Log;
-import android.view.View;
 import android.view.Menu;
 import android.view.MenuItem;
+import android.view.View;
+import android.widget.ArrayAdapter;
+import android.widget.ListAdapter;
+import android.widget.ListView;
 
 import java.util.HashMap;
-import java.util.List;
-import java.util.Locale;
-import java.util.Map;
+
+import static android.R.id.list;
 
 public class ListCities extends AppCompatActivity {
     String LIST_CITIES = "ListCities ";
+    int MY_PERMISSIONS = 0;
+    private ListView mListView;
+    String[] cityNames = {"austin", "dallas", "denton", "el paso", "houston", "lubbock", "san antonio"};
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
-        int MY_PERMISSIONS = 0;
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_list_cities);
         Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
 
         ActivityCompat.requestPermissions(this, new String[] { Manifest.permission.ACCESS_COARSE_LOCATION }, MY_PERMISSIONS);
-
-
-        checkPermissions();
-        listCities();
+        getClosestCity();
         Log.d(LIST_CITIES, "in onCreate");
 
-
+        mListView = (ListView) findViewById(R.id.cities_list_view);
+        ArrayAdapter adapter = new ArrayAdapter(this, android.R.layout.simple_list_item_1, cityNames);
+        mListView.setAdapter(adapter);
     }
 
     @Override
@@ -69,8 +67,10 @@ public class ListCities extends AppCompatActivity {
         return super.onOptionsItemSelected(item);
     }
 
-    private void listCities(){
-
+    public void openDrawer(View view){
+        Intent intentFavorites = new Intent(this, Drawer.class);
+        startActivity(intentFavorites);
+        Log.d(LIST_CITIES, "in openDrawer");
     }
 
     private String getClosestCity(){
@@ -84,38 +84,23 @@ public class ListCities extends AppCompatActivity {
                 // Called when a new location is found by the network location provider.
                 //makeUseOfNewLocation(location);
             }
-
             public void onStatusChanged(String provider, int status, Bundle extras) {
             }
-
             public void onProviderEnabled(String provider) {
             }
-
             public void onProviderDisabled(String provider) {
             }
         };
 
-// Register the listener with the Location Manager to receive location updates
-
         if (ActivityCompat.checkSelfPermission(this, Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED && ActivityCompat.checkSelfPermission(this, Manifest.permission.ACCESS_COARSE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
-            // TODO: Consider calling
-
-
-
-            //    ActivityCompat#requestPermissions
-            // here to request the missing permissions, and then overriding
-            //   public void onRequestPermissionsResult(int requestCode, String[] permissions,
-            //                                          int[] grantResults)
-            // to handle the case where the user grants the permission. See the documentation
-            // for ActivityCompat#requestPermissions for more details.
-            //return;
+            ActivityCompat.requestPermissions(this, new String[] { Manifest.permission.ACCESS_COARSE_LOCATION }, MY_PERMISSIONS);
+            return null;
         }
         locationManager.requestLocationUpdates(LocationManager.NETWORK_PROVIDER, 0, 0, locationListener);
         String locationProvider = LocationManager.NETWORK_PROVIDER;
         Location lastKnownLocation = locationManager.getLastKnownLocation(locationProvider);
         Log.d(LIST_CITIES, lastKnownLocation.toString());
 
-        String[] cityNames = {"austin", "dallas", "denton", "el paso", "houston", "lubbock", "san antonio"};
         double userLat = Math.abs(lastKnownLocation.getLatitude());
         double userLong = Math.abs(lastKnownLocation.getLongitude());
         Log.d("userlat", String.valueOf(userLat));
@@ -159,24 +144,4 @@ public class ListCities extends AppCompatActivity {
         Log.d(LIST_CITIES, closestCity);
         return closestCity;
     }
-
-    private void checkPermissions() {
-        // Assume thisActivity is the current activity
-        int permissionCoarse = ContextCompat.checkSelfPermission(this,
-                Manifest.permission.ACCESS_COARSE_LOCATION);
-        int permissionFine = ContextCompat.checkSelfPermission(this,
-                Manifest.permission.ACCESS_FINE_LOCATION);
-        Log.d("", "Permission checks:");
-        if (permissionCoarse == PackageManager.PERMISSION_GRANTED) {
-            Log.d("","We have permission for coarse location.");
-        } else {
-            Log.d("","We DO NOT have permission for coarse location.");
-        }
-        if (permissionFine == PackageManager.PERMISSION_GRANTED) {
-            Log.d("","We have permission for fine location.");
-        } else {
-            Log.d("","We DO NOT have permission for fine location.");
-        }
-    }
-
 }
