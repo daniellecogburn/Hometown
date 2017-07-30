@@ -8,13 +8,17 @@ import android.location.Location;
 import android.location.LocationListener;
 import android.location.LocationManager;
 import android.os.Bundle;
+import android.support.design.widget.NavigationView;
 import android.support.v4.app.ActivityCompat;
+import android.support.v4.widget.DrawerLayout;
+import android.support.v7.app.ActionBarDrawerToggle;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
 import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
+import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.ListAdapter;
 import android.widget.ListView;
@@ -23,11 +27,13 @@ import java.util.HashMap;
 
 import static android.R.id.list;
 
-public class ListCities extends AppCompatActivity {
-    String LIST_CITIES = "ListCities ";
+public class ListCities extends Drawer {
+    String TAG = "ListCities ";
     int MY_PERMISSIONS = 0;
     private ListView mListView;
     String[] cityNames = {"austin", "dallas", "denton", "el paso", "houston", "lubbock", "san antonio"};
+    private static Context context;
+
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -35,14 +41,49 @@ public class ListCities extends AppCompatActivity {
         setContentView(R.layout.activity_list_cities);
         Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
+        ListCities.context = getApplicationContext();
 
         ActivityCompat.requestPermissions(this, new String[] { Manifest.permission.ACCESS_COARSE_LOCATION }, MY_PERMISSIONS);
         getClosestCity();
-        Log.d(LIST_CITIES, "in onCreate");
+        Log.d(TAG, "in onCreate");
 
         mListView = (ListView) findViewById(R.id.cities_list_view);
         ArrayAdapter adapter = new ArrayAdapter(this, android.R.layout.simple_list_item_1, cityNames);
         mListView.setAdapter(adapter);
+        setListViewListener();
+
+        DrawerLayout drawer = (DrawerLayout) findViewById(R.id.drawer_layout);
+        ActionBarDrawerToggle toggle = new ActionBarDrawerToggle(
+                this, drawer, toolbar, R.string.navigation_drawer_open, R.string.navigation_drawer_close);
+        drawer.setDrawerListener(toggle);
+        toggle.syncState();
+
+        NavigationView navigationView = (NavigationView) findViewById(R.id.nav_view);
+        navigationView.setNavigationItemSelectedListener(this);
+    }
+
+    public void listItemClicked(View view){
+        Log.d(TAG, "clicked!");
+        view.getId();
+        Log.d(TAG, String.valueOf(view.getId()));
+    }
+
+    private void setListViewListener() {
+        mListView.setOnItemSelectedListener(
+                new AdapterView.OnItemSelectedListener() {
+                    @Override
+                    public void onItemSelected(AdapterView<?> parentView, View selectedItemView, int position, long id) {
+                        Log.d(TAG, "id of selected item: " + position);
+                        Intent intentFavorites = new Intent(context, Favorites.class);
+                        intentFavorites.putExtra("test", id);
+                        startActivity(intentFavorites);
+                    }
+                    @Override
+                    public void onNothingSelected(AdapterView<?> parentView) {
+                        // nothing to do
+                    }
+
+                });
     }
 
     @Override
@@ -67,11 +108,6 @@ public class ListCities extends AppCompatActivity {
         return super.onOptionsItemSelected(item);
     }
 
-    public void openDrawer(View view){
-        Intent intentFavorites = new Intent(this, Drawer.class);
-        startActivity(intentFavorites);
-        Log.d(LIST_CITIES, "in openDrawer");
-    }
 
     private String getClosestCity(){
         // Acquire a reference to the system Location Manager
@@ -99,7 +135,7 @@ public class ListCities extends AppCompatActivity {
         locationManager.requestLocationUpdates(LocationManager.NETWORK_PROVIDER, 0, 0, locationListener);
         String locationProvider = LocationManager.NETWORK_PROVIDER;
         Location lastKnownLocation = locationManager.getLastKnownLocation(locationProvider);
-        Log.d(LIST_CITIES, lastKnownLocation.toString());
+        Log.d(TAG, lastKnownLocation.toString());
 
         double userLat = Math.abs(lastKnownLocation.getLatitude());
         double userLong = Math.abs(lastKnownLocation.getLongitude());
@@ -141,7 +177,7 @@ public class ListCities extends AppCompatActivity {
         if (dist > 8){
             closestCity = "none";
         }
-        Log.d(LIST_CITIES, closestCity);
+        Log.d(TAG, closestCity);
         return closestCity;
     }
 }

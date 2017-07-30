@@ -20,17 +20,30 @@
             android:theme="@style/AppTheme.NoActionBar">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
+
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
         <activity
             android:name=".Drawer"
             android:label="@string/title_activity_drawer"
-            android:theme="@style/AppTheme.NoActionBar" />
+            android:theme="@style/AppTheme.NoActionBar"></activity>
         <activity
             android:name=".Favorites"
             android:label="@string/title_activity_favorites"
             android:theme="@style/AppTheme.NoActionBar" />
+        <activity
+            android:name=".Settings"
+            android:label="@string/title_activity_settings"
+            android:theme="@style/AppTheme.NoActionBar" />
+        <activity
+            android:name=".Saved"
+            android:label="@string/title_activity_saved"
+            android:theme="@style/AppTheme.NoActionBar" />
+        <activity
+            android:name=".ShuffleArtists"
+            android:label="@string/title_activity_shuffle_artists"
+            android:theme="@style/AppTheme.NoActionBar"></activity>
     </application>
 
 </manifest>
