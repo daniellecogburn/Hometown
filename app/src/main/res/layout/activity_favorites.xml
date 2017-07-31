@@ -7,7 +7,18 @@
     tools:context="dcogburn.hometown.Favorites"
     tools:openDrawer="start">
 
+
     <FrameLayout
+        android:layout_height="match_parent"
+        android:layout_width="match_parent">
+
+
+    <include
+        layout="@layout/activity_drawer"
+        android:layout_height="2dp"
+        android:layout_width="16dp" />
+
+    <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="match_parent">
         <LinearLayout
@@ -22,11 +33,11 @@
 
             </android.support.constraint.ConstraintLayout>
         </LinearLayout>
+    </LinearLayout>
     </FrameLayout>
 
     <include
-        layout="@layout/activity_drawer"
-        android:layout_weight="1" />
+        layout="@layout/activity_drawer" />
 
 
 </android.support.design.widget.CoordinatorLayout>
