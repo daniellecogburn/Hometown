@@ -3,8 +3,6 @@ package dcogburn.hometown;
 import android.app.ActivityManager;
 import android.content.Intent;
 import android.os.Bundle;
-import android.support.design.widget.FloatingActionButton;
-import android.support.design.widget.Snackbar;
 import android.util.Log;
 import android.view.View;
 import android.support.design.widget.NavigationView;
@@ -88,21 +86,25 @@ public class Drawer extends AppCompatActivity
         if (id == R.id.nav_cities) {
             if (!currentActivity.substring(currentActivity.length()-10, currentActivity.length()).equals("ListCities") ) {
                 intent = new Intent(this, ListCities.class);
+                intent.setFlags(Intent.FLAG_ACTIVITY_REORDER_TO_FRONT);
                 startActivity(intent);
             }
         } else if (id == R.id.nav_favorites) {
             if (!currentActivity.substring(currentActivity.length()-9, currentActivity.length()).equals("Favorites") ) {
                 intent = new Intent(this, Favorites.class);
+                intent.setFlags(Intent.FLAG_ACTIVITY_REORDER_TO_FRONT);
                 startActivity(intent);
             }
         } else if (id == R.id.nav_saved) {
             if (!currentActivity.substring(currentActivity.length()-5, currentActivity.length()).equals("Saved") ) {
                 intent = new Intent(this, Saved.class);
+                intent.setFlags(Intent.FLAG_ACTIVITY_REORDER_TO_FRONT);
                 startActivity(intent);
             }
         } else {
             if (!currentActivity.substring(currentActivity.length()-8, currentActivity.length()).equals("Settings") ) {
                 intent = new Intent(this, Settings.class);
+                intent.setFlags(Intent.FLAG_ACTIVITY_REORDER_TO_FRONT);
                 startActivity(intent);
             }
 
