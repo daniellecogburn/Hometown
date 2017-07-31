@@ -35,6 +35,9 @@ public class XMLParser {
 
         // into last.fm tag
         parser.require(XmlPullParser.START_TAG, ns, "lfm");
+        if(parser.getAttributeValue(0).contains("failed")) {
+            return null;
+        }
         parser.next();
 
         // into topalbums
@@ -67,10 +70,8 @@ public class XMLParser {
             String nm = parser.getName();
             if (nm.equals("name")) {
                 name = readName(parser);
-                Log.d("PARSER", name);
             } else if (nm.equals("image") && parser.getAttributeValue(0).contains("extralarge")) {
                 imageLink = readLink(parser);
-                Log.d("PARSER", imageLink);
             } else {
                 skip(parser);
             }

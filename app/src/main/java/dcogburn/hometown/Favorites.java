@@ -1,5 +1,8 @@
 package dcogburn.hometown;
 
+import android.content.Context;
+import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
 import android.os.Bundle;
 import android.support.design.widget.FloatingActionButton;
 import android.support.design.widget.NavigationView;
@@ -11,10 +14,21 @@ import android.support.v7.widget.Toolbar;
 import android.util.Log;
 import android.view.View;
 import android.widget.Button;
+import android.widget.ImageView;
 
+import java.io.File;
 import java.io.FileNotFoundException;
+import java.io.IOException;
+import java.net.MalformedURLException;
+import java.net.URL;
+import java.util.Scanner;
+import java.util.concurrent.ExecutionException;
+
+import static dcogburn.hometown.R.id.imageView;
 
 public class Favorites extends Drawer {
+    
+    String city = "austin";
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -34,28 +48,44 @@ public class Favorites extends Drawer {
 
         final Button button = (Button) findViewById(R.id.button);
         button.setOnClickListener(new View.OnClickListener() {
-            public void onClick(View v) {
-                AlbumGenerator gen = new AlbumGenerator();
-                AlbumInfo album = null;
+            @Override
+            public void onClick(View view) {
                 try {
-                    album = gen.generateAlbum("austin");
-                } catch (FileNotFoundException e) {
+                    generateAlbum(view);
+                } catch (IOException e) {
                     e.printStackTrace();
                 }
-                Log.d("ALBUM", "artist: " + album.getArtistName());
-                Log.d("ALBUM", "album: " + album.getAlbumName());
-                Log.d("ALBUM", "art: " + album.getAlbumArt());
             }
         });
     }
 
-    public void testGenerator () throws FileNotFoundException {
-
+    public AlbumInfo generateAlbum(View v) throws IOException {
         AlbumGenerator gen = new AlbumGenerator();
-        AlbumInfo album = gen.generateAlbum("austin");
+        AlbumInfo album = null;
+
+        // TODO : hard-coded Austin
+        Scanner sFile = new Scanner(getResources().openRawResource(R.raw.austin));
+
+        try {
+            album = gen.generateAlbum("austin", sFile);
+        } catch (ExecutionException e) {
+            e.printStackTrace();
+        } catch (InterruptedException e) {
+            e.printStackTrace();
+        }
+
         Log.d("ALBUM", "artist: " + album.getArtistName());
         Log.d("ALBUM", "album: " + album.getAlbumName());
         Log.d("ALBUM", "art: " + album.getAlbumArt());
+
+//        URL url = new URL(album.getAlbumArt());
+//        Bitmap bmp = BitmapFactory.decodeStream(url.openConnection().getInputStream());
+//        ImageView tv1 = (ImageView) findViewById(R.id.albumArt);
+//        tv1.setImageBitmap(bmp);
+
+        return album;
+
+
     }
 
 }
