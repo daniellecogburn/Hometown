@@ -1,5 +1,6 @@
 package dcogburn.hometown;
 
+import android.util.Log;
 import android.util.Xml;
 import org.xmlpull.v1.XmlPullParser;
 import org.xmlpull.v1.XmlPullParserException;
@@ -32,7 +33,12 @@ public class XMLParser {
     private ArrayList readFeed(XmlPullParser parser) throws XmlPullParserException, IOException {
         ArrayList albums = new ArrayList();
 
+        // into last.fm tag
         parser.require(XmlPullParser.START_TAG, ns, "lfm");
+        parser.next();
+
+        // into topalbums
+        parser.require(XmlPullParser.START_TAG, ns, "topalbums");
         while (parser.next() != XmlPullParser.END_TAG) {
             if (parser.getEventType() != XmlPullParser.START_TAG) {
                 continue;
@@ -61,8 +67,10 @@ public class XMLParser {
             String nm = parser.getName();
             if (nm.equals("name")) {
                 name = readName(parser);
+                Log.d("PARSER", name);
             } else if (nm.equals("image") && parser.getAttributeValue(0).contains("extralarge")) {
                 imageLink = readLink(parser);
+                Log.d("PARSER", imageLink);
             } else {
                 skip(parser);
             }

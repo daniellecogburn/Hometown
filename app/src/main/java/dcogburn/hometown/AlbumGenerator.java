@@ -15,11 +15,12 @@ import java.net.URL;
 import java.util.ArrayList;
 import java.util.Random;
 import java.util.Scanner;
+import java.util.concurrent.ExecutionException;
 
 /**
  * Created by Benjamin on 7/28/2017.
  * Generates albums based on location.
- * uses last.fm api
+ * uses last.fm web api
  */
 
 public class AlbumGenerator {
@@ -27,9 +28,10 @@ public class AlbumGenerator {
     // random number generator
     private Random rand;
 
+    private ArrayList<AlbumEntry> xmlResponse;
+
     public AlbumGenerator() {
         rand = new Random();
-        // set up api stuff here
     }
 
     public AlbumInfo generateAlbum(String city) throws FileNotFoundException {
@@ -43,8 +45,13 @@ public class AlbumGenerator {
         //do {
             if(artistList != null) {
                 artist = chooseRandomArtist(artistList);
-                Log.d("ARTIST", artist);
-                album = getRandomAlbum(getAlbumList(artist));
+                try {
+                    album = getRandomAlbum(getAlbumList(artist));
+                } catch (ExecutionException e) {
+                    e.printStackTrace();
+                } catch (InterruptedException e) {
+                    e.printStackTrace();
+                }
             }
         //} while (albumInfo exists in any list); // TODO: search user's lists for album info
 
@@ -90,10 +97,18 @@ public class AlbumGenerator {
 //        inFile.close();
 
 
-
+        
         // TEST CODE
 
-        artistList.add("animalcollective");
+        artistList.add("...And You Will Know Us by the Trail of Dead");
+        artistList.add("Arc Angels");
+        artistList.add("Asleep at the Wheel");
+        artistList.add("Asylum Street Spankers");
+        artistList.add("At All Cost");
+        artistList.add("Austin Lounge Lizards");
+        artistList.add("Averse Sefira");
+        artistList.add("Bad Livers");
+        artistList.add("Balmorhea");
 
         return artistList.toArray(new String[0]);
 
@@ -104,7 +119,7 @@ public class AlbumGenerator {
         return artistList[index];
     }
 
-    private ArrayList<AlbumEntry> getAlbumList(String artist) {
+    private ArrayList<AlbumEntry> getAlbumList(String artist) throws ExecutionException, InterruptedException {
 
         // build URL
         StringBuilder sb = new StringBuilder();
@@ -113,19 +128,15 @@ public class AlbumGenerator {
         sb.append("&api_key=");
         sb.append("dd9ced546f7bedffd7383459b13326e3");
         String url = sb.toString();
-
         Log.d("Last.fm api call:", url);
 
-        new Parse().execute(url);
+        ArrayList<AlbumEntry> tempAlbumList = new ArrayList<>();
 
-        // TODO testCode, implement real lastfm code later
-        ArrayList<AlbumEntry> tempAlbumList = new ArrayList<AlbumEntry>();
-        tempAlbumList.add(new AlbumEntry("Merriwether Post Pavilion", "https://lastfm-img2.akamaized.net/i/u/300x300/ff4d87fef6994cb397f7f8cd98614170.png"));
-        tempAlbumList.add(new AlbumEntry("Feels", "https://lastfm-img2.akamaized.net/i/u/300x300/fa7a08f4416041aab670992ae3bc52d8.png"));
-        tempAlbumList.add(new AlbumEntry("Sung Tongs", "https://lastfm-img2.akamaized.net/i/u/300x300/76a6ba269784483d974f7594a671581f.png"));
-        tempAlbumList.add(new AlbumEntry("Strawberry Jam", "https://lastfm-img2.akamaized.net/i/u/300x300/360dca58f95a480a916b37a5d0f8f7fd.png"));
-        tempAlbumList.add(new AlbumEntry("Here Comes the Indian", "https://lastfm-img2.akamaized.net/i/u/300x300/6e3266929db2482182d039f9e221b32a.png"));
-        tempAlbumList.add(new AlbumEntry("Centipede Hz", "https://lastfm-img2.akamaized.net/i/u/300x300/de477d524b724574abebd3e2fab76ff9.png"));
+        tempAlbumList = new Parse().execute(url).get();
+
+        // TODO: race condition ?
+
+        //tempAlbumList = xmlResponse;
 
         // return list of Album objects
         return tempAlbumList;
@@ -133,23 +144,15 @@ public class AlbumGenerator {
 
     class Parse extends AsyncTask<String, Void, ArrayList<AlbumEntry>> {
 
-        // TODO this doesn't work at all pls help
-
-        @Override
-        protected void onPreExecute() {
-            super.onPreExecute();
-
-        }
-
         protected ArrayList<AlbumEntry> doInBackground(String... urls) {
             // search for url, returns xml of albums
             ArrayList<AlbumEntry> albumList = null;
-            Log.d("DEBUG", "in doInBackground");
+            //Log.d("DEBUG", "in doInBackground");
             try {
                 InputStream input = new URL(urls[0]).openStream();
                 XMLParser xmlparser = new XMLParser();
                 albumList = xmlparser.parse(input);
-                Log.d("DEBUG", urls[0]);
+                //Log.d("DEBUG", "out of XMLParser");
             } catch (IOException e) {
                 e.printStackTrace();
             } catch (XmlPullParserException e) {
@@ -160,9 +163,7 @@ public class AlbumGenerator {
 
         @Override
         protected void onPostExecute(ArrayList<AlbumEntry> list) {
-            //tempAlbumList = list;
-            super.onPreExecute();
-
+            xmlResponse = list;
         }
 
     }
