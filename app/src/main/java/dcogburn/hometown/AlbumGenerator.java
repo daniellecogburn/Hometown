@@ -34,25 +34,27 @@ public class AlbumGenerator {
         rand = new Random();
     }
 
-    public AlbumInfo generateAlbum(String city) throws FileNotFoundException {
+    public AlbumInfo generateAlbum(String city, Scanner sFile) throws ExecutionException, InterruptedException {
 
         // get artist list
-        String[] artistList = getArtistList(city);
+        String[] artistList = getArtistList(sFile);
         String artist = null;
 
         // generate random album and info
         AlbumEntry album = null;
+        ArrayList<AlbumEntry> list = null;
         //do {
-            if(artistList != null) {
-                artist = chooseRandomArtist(artistList);
-                try {
-                    album = getRandomAlbum(getAlbumList(artist));
-                } catch (ExecutionException e) {
-                    e.printStackTrace();
-                } catch (InterruptedException e) {
-                    e.printStackTrace();
-                }
+
+        if(artistList != null) {
+            do{
+                do {
+                    artist = chooseRandomArtist(artistList);
+                    list = getAlbumList(artist);
+                } while(list == null);
+                album = getRandomAlbum(list);
             }
+            while (album.imageLink.equals(""));
+        }
         //} while (albumInfo exists in any list); // TODO: search user's lists for album info
 
         // return album
@@ -73,45 +75,18 @@ public class AlbumGenerator {
     }
 
     // get artist array from city text file
-    private String[] getArtistList(String city) throws FileNotFoundException {
+    private String[] getArtistList(Scanner sFile) {
 
-        ArrayList<String> artistList = new ArrayList<String>();
+        ArrayList<String> artistList = new ArrayList<>();
 
-        // TODO: how to actually find file ????
-        // Use firebase? need to figure this out.
-        // for now, use test array.
-
-//        String path = Environment.getExternalStorageDirectory().getAbsolutePath() + "/assets/";
-//        File file = new File(path + city + ".txt");
-//
-//        // scan file
-//        String token = "";
-//        Scanner inFile = new Scanner(file).useDelimiter(",\\s*");
-
-//        while (inFile.hasNext()) {
-//            // find next line
-//            token = inFile.next();
-//            System.out.print(token);
-//            artistList.add(token);
-//        }
-//        inFile.close();
-
-
-        
-        // TEST CODE
-
-        artistList.add("...And You Will Know Us by the Trail of Dead");
-        artistList.add("Arc Angels");
-        artistList.add("Asleep at the Wheel");
-        artistList.add("Asylum Street Spankers");
-        artistList.add("At All Cost");
-        artistList.add("Austin Lounge Lizards");
-        artistList.add("Averse Sefira");
-        artistList.add("Bad Livers");
-        artistList.add("Balmorhea");
+        String token = "";
+        while (sFile.hasNext()) {
+            token = sFile.nextLine();
+            artistList.add(token);
+        }
+        sFile.close();
 
         return artistList.toArray(new String[0]);
-
     }
 
     private String chooseRandomArtist(String[] artistList) {
@@ -130,16 +105,12 @@ public class AlbumGenerator {
         String url = sb.toString();
         Log.d("Last.fm api call:", url);
 
-        ArrayList<AlbumEntry> tempAlbumList = new ArrayList<>();
-
-        tempAlbumList = new Parse().execute(url).get();
+        ArrayList<AlbumEntry> albumList = new Parse().execute(url).get();
 
         // TODO: race condition ?
 
-        //tempAlbumList = xmlResponse;
-
         // return list of Album objects
-        return tempAlbumList;
+        return albumList;
     }
 
     class Parse extends AsyncTask<String, Void, ArrayList<AlbumEntry>> {
