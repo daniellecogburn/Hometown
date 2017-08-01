@@ -28,7 +28,9 @@ import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.ListAdapter;
 import android.widget.ListView;
+import android.widget.AdapterView.OnItemClickListener;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -53,27 +55,9 @@ public class ListCities extends Drawer {
         setSupportActionBar(toolbar);
         ListCities.context = getApplicationContext();
 
-        ActivityCompat.requestPermissions(this, new String[] { Manifest.permission.ACCESS_COARSE_LOCATION }, MY_PERMISSIONS);
+        ActivityCompat.requestPermissions(this, new String[]{Manifest.permission.ACCESS_COARSE_LOCATION}, MY_PERMISSIONS);
+        getClosestCity();
         Log.d(TAG, "in onCreate");
-
-        setContentView(R.layout.activity_list_cities);
-
-        // Defined Array values to show in ListView
-        cityNames.add(0,"Your Closest City: " + getClosestCity());
-        ArrayAdapter adapter = new ArrayAdapter(this, android.R.layout.simple_list_item_1, cityNames);
-        // Assign adapter to ListView15
-        listView = (ListView) findViewById(R.id.cities_list_view);
-        listView.setAdapter(adapter);
-
-        // ListView Item Click Listener
-        listView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
-
-            @Override
-            public void onItemClick(AdapterView<?> arg0, View arg1, int position, long arg3) {
-                Log.d(TAG, "list clicked");
-            }
-        });
-
 
         DrawerLayout drawer = (DrawerLayout) findViewById(R.id.drawer_layout);
         ActionBarDrawerToggle toggle = new ActionBarDrawerToggle(
@@ -83,6 +67,19 @@ public class ListCities extends Drawer {
 
         NavigationView navigationView = (NavigationView) findViewById(R.id.nav_view);
         navigationView.setNavigationItemSelectedListener(this);
+
+        cityNames.add(0, "Your Closest City: " + getClosestCity());
+        ArrayAdapter<String> adapter = new ArrayAdapter<>(this, android.R.layout.simple_list_item_1, cityNames);
+        // Assign adapter to ListView15
+        listView = (ListView) findViewById(R.id.cities_list_view);
+        listView.setAdapter(adapter);
+        listView.setOnItemClickListener(new OnItemClickListener() {
+            @Override
+            public void onItemClick(AdapterView<?> arg0, View arg1, int position, long arg3) {
+                Log.d(TAG, "list clicked");
+                Toast.makeText(getBaseContext(), "sdfasdf", Toast.LENGTH_LONG).show();
+            }
+        });
     }
 
     @Override
