@@ -99,8 +99,8 @@ public class SignIn extends AppCompatActivity implements View.OnClickListener {
             userLogin();
         }
         if (view == textViewSignup) {
-//            finish();
-//            startActivity(new Intent(this, RegisterUser.class));
+            finish();
+            startActivity(new Intent(this, RegisterUser.class));
         }
     }
 }
