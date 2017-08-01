@@ -1,0 +1,42 @@
+{
+  "project_info": {
+    "project_number": "844553711103",
+    "firebase_url": "https://hometown-639e3.firebaseio.com",
+    "project_id": "hometown-639e3",
+    "storage_bucket": "hometown-639e3.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:844553711103:android:0145e7f28e71d7fa",
+        "android_client_info": {
+          "package_name": "dcogburn.hometown"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "844553711103-69l6eoa25afp44108mt5ige12jh9l3k7.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyAigEgpbD3yIbusHfcPxsg2F1EHexrpFZs"
+        }
+      ],
+      "services": {
+        "analytics_service": {
+          "status": 1
+        },
+        "appinvite_service": {
+          "status": 1,
+          "other_platform_oauth_client": []
+        },
+        "ads_service": {
+          "status": 2
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
