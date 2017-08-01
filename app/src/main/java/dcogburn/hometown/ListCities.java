@@ -1,15 +1,21 @@
 package dcogburn.hometown;
 
 import android.Manifest;
+import android.app.Activity;
+import android.app.ListActivity;
 import android.content.Context;
 import android.content.Intent;
 import android.content.pm.PackageManager;
+import android.database.Cursor;
 import android.location.Location;
 import android.location.LocationListener;
 import android.location.LocationManager;
 import android.os.Bundle;
 import android.support.design.widget.NavigationView;
 import android.support.v4.app.ActivityCompat;
+import android.support.v4.app.LoaderManager;
+import android.support.v4.content.CursorLoader;
+import android.support.v4.content.Loader;
 import android.support.v4.widget.DrawerLayout;
 import android.support.v7.app.ActionBarDrawerToggle;
 import android.support.v7.app.AppCompatActivity;
@@ -22,7 +28,10 @@ import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.ListAdapter;
 import android.widget.ListView;
+import android.widget.TextView;
 
+import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.HashMap;
 
 import static android.R.id.list;
@@ -31,8 +40,9 @@ public class ListCities extends Drawer {
     String TAG = "ListCities ";
     int MY_PERMISSIONS = 0;
     private ListView mListView;
-    String[] cityNames = {"austin", "dallas", "denton", "el paso", "houston", "lubbock", "san antonio"};
+    ArrayList<String> cityNames = new ArrayList<String>(Arrays.asList("austin", "dallas", "denton", "el paso", "houston", "lubbock", "san antonio"));
     private static Context context;
+    ListView listView;
 
 
     @Override
@@ -44,13 +54,26 @@ public class ListCities extends Drawer {
         ListCities.context = getApplicationContext();
 
         ActivityCompat.requestPermissions(this, new String[] { Manifest.permission.ACCESS_COARSE_LOCATION }, MY_PERMISSIONS);
-        getClosestCity();
         Log.d(TAG, "in onCreate");
 
-        mListView = (ListView) findViewById(R.id.cities_list_view);
+        setContentView(R.layout.activity_list_cities);
+
+        // Defined Array values to show in ListView
+        cityNames.add(0,"Your Closest City: " + getClosestCity());
         ArrayAdapter adapter = new ArrayAdapter(this, android.R.layout.simple_list_item_1, cityNames);
-        mListView.setAdapter(adapter);
-        setListViewListener();
+        // Assign adapter to ListView15
+        listView = (ListView) findViewById(R.id.cities_list_view);
+        listView.setAdapter(adapter);
+
+        // ListView Item Click Listener
+        listView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
+
+            @Override
+            public void onItemClick(AdapterView<?> arg0, View arg1, int position, long arg3) {
+                Log.d(TAG, "list clicked");
+            }
+        });
+
 
         DrawerLayout drawer = (DrawerLayout) findViewById(R.id.drawer_layout);
         ActionBarDrawerToggle toggle = new ActionBarDrawerToggle(
@@ -60,30 +83,6 @@ public class ListCities extends Drawer {
 
         NavigationView navigationView = (NavigationView) findViewById(R.id.nav_view);
         navigationView.setNavigationItemSelectedListener(this);
-    }
-
-    public void listItemClicked(View view){
-        Log.d(TAG, "clicked!");
-        view.getId();
-        Log.d(TAG, String.valueOf(view.getId()));
-    }
-
-    private void setListViewListener() {
-        mListView.setOnItemSelectedListener(
-                new AdapterView.OnItemSelectedListener() {
-                    @Override
-                    public void onItemSelected(AdapterView<?> parentView, View selectedItemView, int position, long id) {
-                        Log.d(TAG, "id of selected item: " + position);
-                        Intent intentFavorites = new Intent(context, Favorites.class);
-                        intentFavorites.putExtra("test", id);
-                        startActivity(intentFavorites);
-                    }
-                    @Override
-                    public void onNothingSelected(AdapterView<?> parentView) {
-                        // nothing to do
-                    }
-
-                });
     }
 
     @Override
@@ -164,18 +163,18 @@ public class ListCities extends Drawer {
         double shortestDist = 1000;
         String closestCity = "";
         double dist = 0;
-        for (int i = 0; i < cityNames.length; i++){
-            double cityLat = Math.abs(latMap.get(cityNames[i]));
-            double cityLong = Math.abs(longMap.get(cityNames[i]));
+        for (int i = 0; i < cityNames.size(); i++){
+            double cityLat = Math.abs(latMap.get(cityNames.get(i)));
+            double cityLong = Math.abs(longMap.get(cityNames.get(i)));
             dist = Math.sqrt((Math.pow(cityLat - userLat,2) + Math.pow(cityLong-userLong, 2)));
-            Log.d(cityNames[i], String.valueOf(dist));
+            Log.d(cityNames.get(i), String.valueOf(dist));
             if (shortestDist > dist){
                 shortestDist = dist;
-                closestCity = cityNames[i];
+                closestCity = cityNames.get(i);
             }
         }
         if (dist > 8){
-            closestCity = "none";
+            closestCity = "None!";
         }
         Log.d(TAG, closestCity);
         return closestCity;
