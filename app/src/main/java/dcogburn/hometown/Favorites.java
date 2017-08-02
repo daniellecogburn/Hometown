@@ -80,9 +80,6 @@ public class Favorites extends Drawer {
         FirebaseDatabase database = FirebaseDatabase.getInstance();
         DatabaseReference dReference = database.getReference();
 
-        Query query = dReference.child("noIdea").equalTo(true==true){
-
-        }
     }
 
     private void initializeGrid(){

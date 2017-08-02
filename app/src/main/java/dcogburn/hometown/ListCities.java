@@ -68,7 +68,8 @@ public class ListCities extends Drawer {
         NavigationView navigationView = (NavigationView) findViewById(R.id.nav_view);
         navigationView.setNavigationItemSelectedListener(this);
 
-        cityNames.add(0, "Your Closest City: " + getClosestCity());
+        final String closestCity = getClosestCity();
+        cityNames.add(0, "Your Closest City: " + closestCity);
         ArrayAdapter<String> adapter = new ArrayAdapter<>(this, android.R.layout.simple_list_item_1, cityNames);
         // Assign adapter to ListView15
         listView = (ListView) findViewById(R.id.cities_list_view);
@@ -77,8 +78,13 @@ public class ListCities extends Drawer {
             @Override
             public void onItemClick(AdapterView<?> adapterView, View view, int i, long l) {
                 String value = (String) listView.getItemAtPosition(i);
-
-                Toast.makeText(ListCities.this, "" + value, Toast.LENGTH_SHORT).show();
+                Intent intent = new Intent(getApplicationContext(), ShuffleArtists.class);
+                intent.setFlags(Intent.FLAG_ACTIVITY_REORDER_TO_FRONT);
+                intent.putExtra("city", cityNames.get(i));
+                if (i == 0){
+                    intent.putExtra("city", closestCity);
+                }
+                startActivity(intent);
             }
         });
 

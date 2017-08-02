@@ -41,7 +41,7 @@ public class SignIn extends AppCompatActivity implements View.OnClickListener {
 
         if (firebaseAuth.getCurrentUser() != null) {
             finish();
-            startActivity(new Intent(getApplicationContext(), ListCities.class));
+            startActivity(new Intent(getApplicationContext(), Favorites.class));
 
         }
 
@@ -86,7 +86,7 @@ public class SignIn extends AppCompatActivity implements View.OnClickListener {
                         if (task.isSuccessful()) {
                             //start prof activity
                             finish();
-                            startActivity(new Intent(getApplicationContext(), ListCities.class));
+                            startActivity(new Intent(getApplicationContext(), Favorites.class));
                         }
                     }
                 });
