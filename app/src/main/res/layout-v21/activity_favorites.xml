@@ -30,12 +30,15 @@
                 android:id="@+id/album_grid"
                 android:layout_width="match_parent"
                 android:layout_height="match_parent"
+                android:layout_marginLeft="0dp"
+                android:layout_rowWeight=".333"
                 android:stretchMode="columnWidth"
                 android:rowHeight="80dp"
                 android:horizontalSpacing="0dp"
-                android:numColumns="2"
+                android:numColumns="3"
                 android:verticalSpacing="0dp"
-                app:layout_constraintTop_toTopOf="parent" />
+                app:layout_constraintTop_toTopOf="parent"
+                tools:layout_editor_absoluteX="8dp" />
         </LinearLayout>
 
 </android.support.design.widget.CoordinatorLayout>

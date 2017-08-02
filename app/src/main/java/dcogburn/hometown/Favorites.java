@@ -1,6 +1,7 @@
 package dcogburn.hometown;
 
 import android.content.Context;
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
@@ -11,8 +12,10 @@ import android.support.design.widget.NavigationView;
 import android.support.design.widget.Snackbar;
 import android.support.v4.widget.DrawerLayout;
 import android.support.v7.app.ActionBarDrawerToggle;
+import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
+import android.util.DisplayMetrics;
 import android.util.Log;
 import android.view.View;
 import android.view.ViewGroup;
@@ -20,6 +23,7 @@ import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.BaseAdapter;
 import android.widget.Button;
+import android.widget.GridLayout;
 import android.widget.GridView;
 import android.widget.ImageView;
 import android.widget.ListView;
@@ -63,8 +67,10 @@ public class Favorites extends AppCompatActivity {
         setSupportActionBar(toolbar);
 
         userInfo = new UserInformation();
-
         initializeGrid();
+
+        //hardcoded
+        favoriteAlbumList = new ArrayList<>();
     }
 
     private void doDatabase(){
@@ -76,7 +82,31 @@ public class Favorites extends AppCompatActivity {
     private void initializeGrid(){
         albumGridView = (GridView) findViewById(R.id.album_grid);
         albumGridView.setAdapter(new ImageAdapter(this));
-        setGridViewListener();
+        albumGridView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
+            public void onItemClick(AdapterView<?> parent, View v,
+                                    int position, long id) {
+                Log.d(TAG, "clicked");
+                showDialog(favoriteAlbumList.get(position));
+            }
+        });
+    }
+
+    private void showDialog(AlbumInfo albumInfo){
+        AlertDialog.Builder builder = new AlertDialog.Builder(this);
+        builder.setMessage(albumInfo.getAlbumName() + "\n" + albumInfo.getCity())
+                .setTitle(albumInfo.getArtistName());
+        builder.setPositiveButton(R.string.ok, new DialogInterface.OnClickListener() {
+            public void onClick(DialogInterface dialog, int id) {
+                // User clicked OK button
+            }
+        });
+        builder.setNegativeButton(R.string.cancel, new DialogInterface.OnClickListener() {
+            public void onClick(DialogInterface dialog, int id) {
+                // User cancelled the dialog
+            }
+        });
+        AlertDialog dialog = builder.create();
+        dialog.show();
     }
 
     public class ImageAdapter extends BaseAdapter {   // copied from https://developer.android.com/guide/topics/ui/layout/gridview.html and adapted for use here
@@ -87,7 +117,7 @@ public class Favorites extends AppCompatActivity {
         }
 
         public int getCount() {
-            return 1; //hardcoded for testing
+            return 8; //hardcoded for testing
             //return favoriteAlbumList.size();
         }
 
@@ -105,26 +135,32 @@ public class Favorites extends AppCompatActivity {
             if (convertView == null) {
                 // if it's not recycled, initialize some attributes
                 imageView = new ImageView(mContext);
-                //imageView.setLayoutParams(new GridView.LayoutParams(500,500));
-                imageView.setScaleType(ImageView.ScaleType.CENTER_CROP);
-                imageView.setPadding(8, 8, 8, 8);
+                imageView.setLayoutParams(new GridLayout.LayoutParams(GridLayout.spec(85),GridLayout.spec(85)));
+                imageView.setScaleType(ImageView.ScaleType.FIT_CENTER);
+                imageView.setMaxHeight(45);
             } else {
                 imageView = (ImageView) convertView;
             }
+            DisplayMetrics metrics = new DisplayMetrics();
+            getWindowManager().getDefaultDisplay().getMetrics(metrics);
 
+            int width = metrics.widthPixels;
+            int height = metrics.heightPixels;
+            String //urlStr = favoriteAlbumList.get(position).getAlbumArt();
+            urlStr = "http://www.billboard.com/files/styles/900_wide/public/media/Joy-Division-Unknown-Pleasures-album-covers-billboard-1000x1000.jpg";
             URL url = null;
                 // hardcoded for testing
                 AlbumURL albumUrl = new AlbumURL();
-                //url = new URL(favoriteAlbumList.get(position).getAlbumArt());
             Bitmap bmp = null;
             try {
-                bmp = albumUrl.execute("").get();
+                bmp = albumUrl.execute(urlStr).get();
             } catch (InterruptedException e) {
                 e.printStackTrace();
             } catch (ExecutionException e) {
                 e.printStackTrace();
             }
             imageView.setImageBitmap(bmp);
+            imageView.setImageBitmap(Bitmap.createScaledBitmap(bmp, width/3, width/3, false));
             return imageView;
         }
 
@@ -138,7 +174,7 @@ public class Favorites extends AppCompatActivity {
             // search for url, returns xml of albums
             URL url = null;
             try {
-                url = new URL("http://www.fuse.tv/image/56fe73a1e05e186b2000009b/768/512/the-boxer-rebellion-ocean-by-ocean-album-cover-full-size.jpg");
+                url = new URL(urls[0]);
             } catch (MalformedURLException e) {
                 e.printStackTrace();
             }
@@ -159,51 +195,5 @@ public class Favorites extends AppCompatActivity {
 */
     }
 
-    private void setGridViewListener() {
-        albumGridView.setOnItemSelectedListener(
-                new AdapterView.OnItemSelectedListener() {
-                    @Override
-                    public void onItemSelected(AdapterView<?> parentView, View selectedItemView, int position, long id) {
-                        Log.d(TAG, "id of selected item: " + position);
-                        Intent intentFavorites = new Intent(context, Favorites.class);
-                        intentFavorites.putExtra("test", id);
-                        startActivity(intentFavorites);
-                    }
-                    @Override
-                    public void onNothingSelected(AdapterView<?> parentView) {
-                        // nothing to do
-                    }
-
-                });
-    }
-
-    public AlbumInfo generateAlbum(View v) throws IOException {
-        AlbumGenerator gen = new AlbumGenerator();
-        AlbumInfo album = null;
-
-        // TODO : hard-coded Austin
-        Scanner sFile = new Scanner(getResources().openRawResource(R.raw.austin));
-
-        try {
-            album = gen.generateAlbum("austin", sFile);
-        } catch (ExecutionException e) {
-            e.printStackTrace();
-        } catch (InterruptedException e) {
-            e.printStackTrace();
-        }
-
-        Log.d("ALBUM", "artist: " + album.getArtistName());
-        Log.d("ALBUM", "album: " + album.getAlbumName());
-        Log.d("ALBUM", "art: " + album.getAlbumArt());
-
-//        URL url = new URL(album.getAlbumArt());
-//        Bitmap bmp = BitmapFactory.decodeStream(url.openConnection().getInputStream());
-//        ImageView tv1 = (ImageView) findViewById(R.id.albumArt);
-//        tv1.setImageBitmap(bmp);
-
-        return album;
-
-
-    }
 
 }
