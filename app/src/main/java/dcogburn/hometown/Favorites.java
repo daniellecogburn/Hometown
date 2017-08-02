@@ -24,6 +24,13 @@ import android.widget.GridView;
 import android.widget.ImageView;
 import android.widget.ListView;
 
+import com.google.firebase.database.DataSnapshot;
+import com.google.firebase.database.DatabaseError;
+import com.google.firebase.database.DatabaseReference;
+import com.google.firebase.database.FirebaseDatabase;
+import com.google.firebase.database.Query;
+import com.google.firebase.database.ValueEventListener;
+
 import org.xmlpull.v1.XmlPullParserException;
 
 import java.io.File;
@@ -46,6 +53,7 @@ public class Favorites extends Drawer {
     private String TAG = "Favorites";
     private static Context context;
     String city = "austin";
+    UserInformation userInfo;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -53,6 +61,8 @@ public class Favorites extends Drawer {
         setContentView(R.layout.activity_favorites);
         Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
+
+        userInfo = new UserInformation();
 
         DrawerLayout drawer = (DrawerLayout) findViewById(R.id.drawer_layout);
         ActionBarDrawerToggle toggle = new ActionBarDrawerToggle(
@@ -64,6 +74,15 @@ public class Favorites extends Drawer {
         navigationView.setNavigationItemSelectedListener(this);
 
         initializeGrid();
+    }
+
+    private void doDatabase(){
+        FirebaseDatabase database = FirebaseDatabase.getInstance();
+        DatabaseReference dReference = database.getReference();
+
+        Query query = dReference.child("noIdea").equalTo(true==true){
+
+        }
     }
 
     private void initializeGrid(){
