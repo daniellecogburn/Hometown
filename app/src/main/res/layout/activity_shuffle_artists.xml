@@ -20,18 +20,46 @@
 
     </android.support.design.widget.AppBarLayout>
 
-    <include layout="@layout/content_shuffle_artists" />
-
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:orientation="vertical">
+        android:orientation="vertical"
+        android:weightSum="1"
+        tools:layout_editor_absoluteX="8dp"
+        tools:layout_editor_absoluteY="129dp">
+
+        <Button
+            android:id="@+id/generatealbum"
+            android:layout_width="match_parent"
+            android:layout_height="18dp"
+            android:layout_marginTop="60dp"
+            android:layout_weight="0.16"
+            android:text="Generate Album" />
 
         <ImageView
-            android:id="@+id/imageView2"
+            android:id="@+id/art"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            app:srcCompat="@color/colorAccent" />
+            android:layout_weight="0.73"
+            android:src="@drawable/albumcover" />
+
+        <TextView
+            android:id="@+id/artist"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_gravity="bottom|left"
+            android:layout_weight="0.06"
+            android:text="@string/albumArtist" />
+
+        <TextView
+            android:id="@+id/album"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_gravity="bottom|left"
+            android:layout_weight="0.05"
+            android:text="@string/albumName" />
+
+
     </LinearLayout>
 
 </android.support.design.widget.CoordinatorLayout>
