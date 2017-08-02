@@ -6,16 +6,21 @@
     <string name="navigation_drawer_open">Open navigation drawer</string>
     <string name="navigation_drawer_close">Close navigation drawer</string>
     <string name="title_activity_favorites">Favorites</string>
+    <string name="title_activity_cities">Cities</string>
     <string name="title_activity_settings">Settings</string>
     <string name="title_activity_saved">Saved</string>
     <string name="title_activity_shuffle_artists">ShuffleArtists</string>
 
     <string name="lastfm_api_key">dd9ced546f7bedffd7383459b13326e3</string>
     <string name="lastfm_shared_secret">dfa58d9837d3de1c20f298e1b63ae807</string>
-    
+
     <string name="albumArtist">album artist</string>
     <string name="albumName">album name</string>
     <string name="albumURL">album image</string>
+
+    <!-- TODO: Remove or change this placeholder text -->
+    <string name="hello_blank_fragment">Hello blank fragment</string>
+    <string name="title_activity_navigation">NavigationActivity</string>
 
 
 </resources>

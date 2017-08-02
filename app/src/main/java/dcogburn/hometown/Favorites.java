@@ -47,7 +47,7 @@ import static dcogburn.hometown.R.id.imageView;
 
 // Danielle's responsibility to make this activity
 
-public class Favorites extends Drawer {
+public class Favorites extends AppCompatActivity {
     private GridView albumGridView;
     public ArrayList<AlbumInfo> favoriteAlbumList;
     private String TAG = "Favorites";
@@ -63,15 +63,6 @@ public class Favorites extends Drawer {
         setSupportActionBar(toolbar);
 
         userInfo = new UserInformation();
-
-        DrawerLayout drawer = (DrawerLayout) findViewById(R.id.drawer_layout);
-        ActionBarDrawerToggle toggle = new ActionBarDrawerToggle(
-                this, drawer, toolbar, R.string.navigation_drawer_open, R.string.navigation_drawer_close);
-        drawer.setDrawerListener(toggle);
-        toggle.syncState();
-
-        NavigationView navigationView = (NavigationView) findViewById(R.id.nav_view);
-        navigationView.setNavigationItemSelectedListener(this);
 
         initializeGrid();
     }

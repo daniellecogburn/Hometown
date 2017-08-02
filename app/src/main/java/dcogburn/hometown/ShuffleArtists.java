@@ -47,7 +47,7 @@ public class ShuffleArtists extends AppCompatActivity {
     int MY_PERMISSIONS = 0;
 
     private ArrayList<AlbumInfo> albumQueue;
-    private final String[] cityNames = {"austin", "dallas", "denton", "el paso", "houston", "lubbock", "san antonio"};
+    private final String[] cityNames = {"ustin", "dallas", "denton", "el paso", "houston", "lubbock", "san antonio"};
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -56,16 +56,11 @@ public class ShuffleArtists extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_shuffle_artists);
         Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
-        getActionBar().setTitle(city);
-        getSupportActionBar().setTitle(city);
-
-
+        toolbar.setTitle(city);
         setSupportActionBar(toolbar);
 
         mArtist = (TextView) findViewById(R.id.artist);
         mAlbum = (TextView) findViewById(R.id.album);
-
-
 
         albumQueue = new ArrayList<>();
 
@@ -99,6 +94,9 @@ public class ShuffleArtists extends AppCompatActivity {
         super.onResume();
         Intent intent = getIntent();
         city = intent.getStringExtra("city");
+
+        Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
+        toolbar.setTitle(city);
     }
 
     public void displayAlbum() {
@@ -115,7 +113,7 @@ public class ShuffleArtists extends AppCompatActivity {
         AlbumInfo album = null;
         InputStream is = null;
 
-        switch (city) {
+        switch (city.toLowerCase()) {
             case "austin":
                 is = getResources().openRawResource(R.raw.austin);
                 break;

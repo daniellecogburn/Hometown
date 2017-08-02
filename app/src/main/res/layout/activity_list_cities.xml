@@ -1,35 +1,32 @@
 <?xml version="1.0" encoding="utf-8"?>
-<android.support.v4.widget.DrawerLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<android.support.design.widget.CoordinatorLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    tools:context="dcogburn.hometown.ListCities"
-    tools:openDrawer="start">
+    tools:context="dcogburn.hometown.ListCities">
 
-    <FrameLayout
+    <android.support.design.widget.AppBarLayout
         android:layout_width="match_parent"
-        android:layout_height="match_parent">
-        <include layout="@layout/activity_drawer" />
-    </FrameLayout>
+        android:layout_height="wrap_content"
+        android:theme="@style/AppTheme.AppBarOverlay">
 
-    <FrameLayout
-        android:layout_width="match_parent"
-        android:layout_height="match_parent">
+        <android.support.v7.widget.Toolbar
+            android:id="@+id/toolbar"
+            android:layout_width="match_parent"
+            android:layout_height="?attr/actionBarSize"
+            android:background="?attr/colorPrimary"
+            app:popupTheme="@style/AppTheme.PopupOverlay" />
+
+    </android.support.design.widget.AppBarLayout>
 
         <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:layout_marginTop="80dp"
+        android:layout_marginTop="?android:attr/actionBarSize"
         android:orientation="vertical"
         tools:layout_editor_absoluteX="8dp"
         tools:layout_editor_absoluteY="129dp">
-
-            <Button
-                android:id="@+id/button2"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:text="Button" />
 
             <ListView
                 android:id="@+id/cities_list_view"
@@ -40,11 +37,4 @@
 
         </LinearLayout>
 
-    </FrameLayout>
-
-
-
-
-
-
-</android.support.v4.widget.DrawerLayout>
+</android.support.design.widget.CoordinatorLayout>

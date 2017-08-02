@@ -38,13 +38,15 @@ import java.util.HashMap;
 
 import static android.R.id.list;
 
-public class ListCities extends Drawer {
+public class ListCities extends AppCompatActivity {
     String TAG = "ListCities ";
     int MY_PERMISSIONS = 0;
     private ListView mListView;
-    ArrayList<String> cityNames = new ArrayList<String>(Arrays.asList("austin", "dallas", "denton", "el paso", "houston", "lubbock", "san antonio"));
+    ArrayList<String> cityNames = new ArrayList<String>(Arrays.asList("Austin", "Dallas", "Denton", "El Paso", "Houston", "Lubbock", "San Antonio"));
     private static Context context;
     ListView listView;
+
+    DrawerLayout mDrawerLayout;
 
 
     @Override
@@ -58,15 +60,6 @@ public class ListCities extends Drawer {
         ActivityCompat.requestPermissions(this, new String[]{Manifest.permission.ACCESS_COARSE_LOCATION}, MY_PERMISSIONS);
         getClosestCity();
         Log.d(TAG, "in onCreate");
-
-        DrawerLayout drawer = (DrawerLayout) findViewById(R.id.drawer_layout);
-        ActionBarDrawerToggle toggle = new ActionBarDrawerToggle(
-                this, drawer, toolbar, R.string.navigation_drawer_open, R.string.navigation_drawer_close);
-        drawer.setDrawerListener(toggle);
-        toggle.syncState();
-
-        NavigationView navigationView = (NavigationView) findViewById(R.id.nav_view);
-        navigationView.setNavigationItemSelectedListener(this);
 
         final String closestCity = getClosestCity();
         cityNames.add(0, "Your Closest City: " + closestCity);
@@ -89,6 +82,8 @@ public class ListCities extends Drawer {
         });
 
     }
+
+
 
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
@@ -147,22 +142,22 @@ public class ListCities extends Drawer {
         Log.d("userlong", String.valueOf(userLong));
 
         HashMap<String, Double> latMap = new HashMap();
-        latMap.put("austin", 30.2672);
-        latMap.put("dallas", 32.7767);
-        latMap.put("denton", 33.2148);
-        latMap.put("el paso", 31.7619);
-        latMap.put("houston", 29.7604);
-        latMap.put("lubbock", 33.5779);
-        latMap.put("san antonio", 29.4241);
+        latMap.put("Austin", 30.2672);
+        latMap.put("Dallas", 32.7767);
+        latMap.put("Denton", 33.2148);
+        latMap.put("El Paso", 31.7619);
+        latMap.put("Houston", 29.7604);
+        latMap.put("Lubbock", 33.5779);
+        latMap.put("San Antonio", 29.4241);
 
         HashMap<String, Double> longMap = new HashMap();
-        longMap.put("austin", 97.7431);
-        longMap.put("dallas", 96.7970);
-        longMap.put("denton", 97.1331);
-        longMap.put("el paso", 106.4850);
-        longMap.put("houston", 95.3698);
-        longMap.put("lubbock", 101.8552);
-        longMap.put("san antonio", 98.4936);
+        longMap.put("Austin", 97.7431);
+        longMap.put("Dallas", 96.7970);
+        longMap.put("Denton", 97.1331);
+        longMap.put("El Paso", 106.4850);
+        longMap.put("Houston", 95.3698);
+        longMap.put("Lubbock", 101.8552);
+        longMap.put("San Antonio", 98.4936);
 
 
         double shortestDist = 1000;
