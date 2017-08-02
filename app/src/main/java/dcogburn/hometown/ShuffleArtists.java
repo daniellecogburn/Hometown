@@ -44,10 +44,7 @@ public class ShuffleArtists extends AppCompatActivity {
     private ImageView mArt;
     private String city;
 
-    int MY_PERMISSIONS = 0;
-
     private ArrayList<AlbumInfo> albumQueue;
-    private final String[] cityNames = {"ustin", "dallas", "denton", "el paso", "houston", "lubbock", "san antonio"};
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {

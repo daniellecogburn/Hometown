@@ -14,6 +14,7 @@ import android.os.Bundle;
 import android.support.design.widget.NavigationView;
 import android.support.v4.app.ActivityCompat;
 import android.support.v4.app.LoaderManager;
+import android.support.v4.content.ContextCompat;
 import android.support.v4.content.CursorLoader;
 import android.support.v4.content.Loader;
 import android.support.v4.widget.DrawerLayout;
@@ -46,6 +47,7 @@ public class ListCities extends AppCompatActivity {
     private static Context context;
     ListView listView;
     String closestCity;
+    boolean hasPermissions;
 
     DrawerLayout mDrawerLayout;
 
@@ -58,16 +60,29 @@ public class ListCities extends AppCompatActivity {
         setSupportActionBar(toolbar);
         ListCities.context = getApplicationContext();
 
-        ActivityCompat.requestPermissions(this, new String[]{Manifest.permission.ACCESS_COARSE_LOCATION}, MY_PERMISSIONS);
+        if (ContextCompat.checkSelfPermission(context,
+                Manifest.permission.ACCESS_COARSE_LOCATION)
+                != PackageManager.PERMISSION_GRANTED) {
+            hasPermissions = false;
+        }
+        else{
+            hasPermissions = true;
+        }
+
+
+            ActivityCompat.requestPermissions(this, new String[]{Manifest.permission.ACCESS_COARSE_LOCATION}, MY_PERMISSIONS);
 
         Log.d(TAG, "in onCreate");
 
-        final String closestCity = getClosestCity();
-        cityNames.add(0, "Your Closest City: " + closestCity);
-        if (closestCity == null){
-            cityNames.set(0, "Please change your settings to give Hometown access to your Location.");
+        ArrayList<String> adapterArr = cityNames;
+        if (!hasPermissions){
+            adapterArr.add(0, "Please change your settings to give Hometown access to your Location.");
         }
-        ArrayAdapter<String> adapter = new ArrayAdapter<>(this, android.R.layout.simple_list_item_1, cityNames);
+        else{
+            closestCity = getClosestCity();
+            adapterArr.set(0, "Your Closest City: " + closestCity);
+        }
+        ArrayAdapter<String> adapter = new ArrayAdapter<>(this, android.R.layout.simple_list_item_1, adapterArr);
         // Assign adapter to ListView15
         listView = (ListView) findViewById(R.id.cities_list_view);
         listView.setAdapter(adapter);
@@ -99,9 +114,15 @@ public class ListCities extends AppCompatActivity {
             case MY_PERMISSIONS: {
                 // If request is cancelled, the result arrays are empty.
                 if (grantResults.length > 0 && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
-                    getClosestCity();
+                    if (!hasPermissions){
+                        Intent intent = new Intent(this, ListCities.class);
+                        finish();
+                        startActivity(intent);
+
+                    }
 
                 } else {
+                    hasPermissions = false;
                     closestCity = null;
                 }
                 return;
@@ -190,6 +211,7 @@ public class ListCities extends AppCompatActivity {
         double shortestDist = 1000;
         double dist = 0;
         for (int i = 0; i < cityNames.size(); i++){
+            Log.d(TAG, cityNames.get(i));
             double cityLat = Math.abs(latMap.get(cityNames.get(i)));
             double cityLong = Math.abs(longMap.get(cityNames.get(i)));
             dist = Math.sqrt((Math.pow(cityLat - userLat,2) + Math.pow(cityLong-userLong, 2)));
