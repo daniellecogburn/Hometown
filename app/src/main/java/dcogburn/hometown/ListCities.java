@@ -75,11 +75,13 @@ public class ListCities extends Drawer {
         listView.setAdapter(adapter);
         listView.setOnItemClickListener(new OnItemClickListener() {
             @Override
-            public void onItemClick(AdapterView<?> arg0, View arg1, int position, long arg3) {
-                Log.d(TAG, "list clicked");
-                Toast.makeText(getBaseContext(), "sdfasdf", Toast.LENGTH_LONG).show();
+            public void onItemClick(AdapterView<?> adapterView, View view, int i, long l) {
+                String value = (String) listView.getItemAtPosition(i);
+
+                Toast.makeText(ListCities.this, "" + value, Toast.LENGTH_SHORT).show();
             }
         });
+
     }
 
     @Override
