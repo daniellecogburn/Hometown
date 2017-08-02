@@ -40,11 +40,12 @@ import static android.R.id.list;
 
 public class ListCities extends AppCompatActivity {
     String TAG = "ListCities ";
-    int MY_PERMISSIONS = 0;
+    final int MY_PERMISSIONS = 0;
     private ListView mListView;
     ArrayList<String> cityNames = new ArrayList<String>(Arrays.asList("Austin", "Dallas", "Denton", "El Paso", "Houston", "Lubbock", "San Antonio"));
     private static Context context;
     ListView listView;
+    String closestCity;
 
     DrawerLayout mDrawerLayout;
 
@@ -58,11 +59,14 @@ public class ListCities extends AppCompatActivity {
         ListCities.context = getApplicationContext();
 
         ActivityCompat.requestPermissions(this, new String[]{Manifest.permission.ACCESS_COARSE_LOCATION}, MY_PERMISSIONS);
-        getClosestCity();
+
         Log.d(TAG, "in onCreate");
 
         final String closestCity = getClosestCity();
         cityNames.add(0, "Your Closest City: " + closestCity);
+        if (closestCity == null){
+            cityNames.set(0, "Please change your settings to give Hometown access to your Location.");
+        }
         ArrayAdapter<String> adapter = new ArrayAdapter<>(this, android.R.layout.simple_list_item_1, cityNames);
         // Assign adapter to ListView15
         listView = (ListView) findViewById(R.id.cities_list_view);
@@ -75,12 +79,37 @@ public class ListCities extends AppCompatActivity {
                 intent.setFlags(Intent.FLAG_ACTIVITY_REORDER_TO_FRONT);
                 intent.putExtra("city", cityNames.get(i));
                 if (i == 0){
-                    intent.putExtra("city", closestCity);
+                    if (closestCity != null) {
+                        intent.putExtra("city", closestCity);
+                    }
+                    else{
+                        return;
+                    }
                 }
                 startActivity(intent);
             }
         });
 
+    }
+
+    @Override
+    public void onRequestPermissionsResult(int requestCode,
+                                           String permissions[], int[] grantResults) {
+        switch (requestCode) {
+            case MY_PERMISSIONS: {
+                // If request is cancelled, the result arrays are empty.
+                if (grantResults.length > 0 && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
+                    getClosestCity();
+
+                } else {
+                    closestCity = null;
+                }
+                return;
+            }
+
+            // other 'case' lines to check for other
+            // permissions this app might request
+        }
     }
 
     @Override
@@ -159,7 +188,6 @@ public class ListCities extends AppCompatActivity {
 
 
         double shortestDist = 1000;
-        String closestCity = "";
         double dist = 0;
         for (int i = 0; i < cityNames.size(); i++){
             double cityLat = Math.abs(latMap.get(cityNames.get(i)));
