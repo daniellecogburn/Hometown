@@ -23,6 +23,11 @@ import android.widget.Button;
 import android.widget.ImageView;
 import android.widget.TextView;
 
+import com.google.firebase.auth.FirebaseAuth;
+import com.google.firebase.auth.FirebaseUser;
+import com.google.firebase.database.DatabaseReference;
+import com.google.firebase.database.FirebaseDatabase;
+
 import org.w3c.dom.Text;
 
 import java.io.File;
@@ -44,6 +49,13 @@ public class ShuffleArtists extends AppCompatActivity {
     private ImageView mArt;
     private String city;
 
+    private DatabaseReference databaseReference;
+
+    private FirebaseAuth firebaseAuth;
+
+
+    Button saveAlbum;
+
     int MY_PERMISSIONS = 0;
 
     private ArrayList<AlbumInfo> albumQueue;
@@ -58,6 +70,10 @@ public class ShuffleArtists extends AppCompatActivity {
         Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
         toolbar.setTitle(city);
         setSupportActionBar(toolbar);
+
+        firebaseAuth = FirebaseAuth.getInstance();
+        databaseReference = FirebaseDatabase.getInstance().getReference();
+
 
         mArtist = (TextView) findViewById(R.id.artist);
         mAlbum = (TextView) findViewById(R.id.album);
@@ -75,6 +91,7 @@ public class ShuffleArtists extends AppCompatActivity {
         displayAlbum();
 
         Button button = (Button) findViewById(R.id.generatealbum);
+        saveAlbum = (Button) findViewById(R.id.saveAlbum);
         button.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
@@ -85,6 +102,14 @@ public class ShuffleArtists extends AppCompatActivity {
                 } catch (IOException e) {
                     e.printStackTrace();
                 }
+            }
+        });
+
+        saveAlbum.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                AlbumInfo album = albumQueue.remove(0);
+                databaseReference.child("albums").child(album.getAlbumName()).setValue(album);
             }
         });
     }

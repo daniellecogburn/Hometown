@@ -59,6 +59,11 @@
             android:layout_weight="0.05"
             android:text="@string/albumName" />
 
+        <Button
+            android:id="@+id/saveAlbum"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="Save Album" />
 
     </LinearLayout>
 
