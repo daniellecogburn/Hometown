@@ -109,7 +109,7 @@ public class ShuffleArtists extends AppCompatActivity {
             @Override
             public void onClick(View view) {
                 AlbumInfo album = albumQueue.remove(0);
-                databaseReference.child("albums").child(album.getAlbumName()).setValue(album);
+                databaseReference.child("albums").child(album.getAlbumName() + " - " + album.getArtistName()).setValue(album);
             }
         });
     }
