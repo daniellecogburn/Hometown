@@ -47,7 +47,7 @@ public class RegisterUser extends AppCompatActivity implements View.OnClickListe
 
         if (firebaseAuth.getCurrentUser() != null) {
             finish();
-            startActivity(new Intent(getApplicationContext(), ListCities.class));
+            startActivity(new Intent(getApplicationContext(), NavigationActivity.class));
 
         }
 
@@ -103,7 +103,7 @@ public class RegisterUser extends AppCompatActivity implements View.OnClickListe
                             FirebaseUser user = firebaseAuth.getCurrentUser();
                             databaseReference.child("users").child(user.getUid()).setValue(userInformation);
                             finish();
-                            startActivity(new Intent(getApplicationContext(), ListCities.class));
+                            startActivity(new Intent(getApplicationContext(), NavigationActivity.class));
                         } else {
                             Toast.makeText(RegisterUser.this, "Failed To Register", Toast.LENGTH_SHORT).show();
                             Log.w(TAG, "createUserWithEmail:failure", task.getException());
