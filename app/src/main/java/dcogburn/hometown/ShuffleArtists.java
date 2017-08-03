@@ -55,7 +55,7 @@ public class ShuffleArtists extends AppCompatActivity {
     private FirebaseAuth firebaseAuth;
     static Context context;
 
-    Button saveAlbum;
+    Button favoriteAlbum;
 
     int MY_PERMISSIONS = 0;
 
@@ -92,7 +92,7 @@ public class ShuffleArtists extends AppCompatActivity {
         displayAlbum();
 
         Button button = (Button) findViewById(R.id.generatealbum);
-        saveAlbum = (Button) findViewById(R.id.saveAlbum);
+        favoriteAlbum = (Button) findViewById(R.id.favoriteAlbum);
         button.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
@@ -106,7 +106,7 @@ public class ShuffleArtists extends AppCompatActivity {
             }
         });
 
-        saveAlbum.setOnClickListener(new View.OnClickListener() {
+        favoriteAlbum.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
                 AlbumInfo album = albumQueue.remove(0);

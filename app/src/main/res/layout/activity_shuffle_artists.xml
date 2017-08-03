@@ -25,23 +25,15 @@
         android:layout_height="match_parent"
         android:orientation="vertical"
         android:weightSum="1"
+        android:layout_marginTop="?attr/actionBarSize"
         tools:layout_editor_absoluteX="8dp"
         tools:layout_editor_absoluteY="129dp">
-
-        <Button
-            android:id="@+id/generatealbum"
-            android:layout_width="match_parent"
-            android:layout_height="18dp"
-            android:layout_marginTop="60dp"
-            android:layout_weight="0.16"
-            android:text="Generate Album" />
 
         <ImageView
             android:id="@+id/art"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_weight="0.73"
-            android:src="@drawable/albumcover" />
+            android:layout_weight="0.73" />
 
         <TextView
             android:id="@+id/artist"
@@ -59,11 +51,33 @@
             android:layout_weight="0.05"
             android:text="@string/albumName" />
 
-        <Button
-            android:id="@+id/saveAlbum"
+        <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:text="Save Album" />
+            android:layout_weight="0.16"
+            android:orientation="horizontal">
+
+            <ImageButton
+                android:id="@+id/generatealbum"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_weight=".25"
+                android:background="@android:color/black"
+                android:icon="@drawable/ic_action_next" />
+
+            <Button
+                android:id="@+id/favoriteAlbum"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_weight=".25"
+                android:icon="@drawable/ic_action_favorite" />
+            <Button
+                android:id="@+id/saveAlbum"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_weight=".25"
+                android:drawable="@drawable/ic_action_save" />
+        </LinearLayout>
 
     </LinearLayout>
 
