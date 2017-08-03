@@ -28,6 +28,9 @@ import android.widget.GridView;
 import android.widget.ImageView;
 import android.widget.ListView;
 
+import com.google.firebase.auth.FirebaseAuth;
+import com.google.firebase.auth.FirebaseUser;
+import com.google.firebase.database.ChildEventListener;
 import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
@@ -66,17 +69,47 @@ public class Favorites extends AppCompatActivity {
         Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
 
-        userInfo = new UserInformation();
-        initializeGrid();
-
         //hardcoded
         favoriteAlbumList = new ArrayList<>();
-    }
+        DatabaseReference mDatabase;
+        mDatabase = FirebaseDatabase.getInstance().getReference();
 
-    private void doDatabase(){
-        FirebaseDatabase database = FirebaseDatabase.getInstance();
-        DatabaseReference dReference = database.getReference();
+        ChildEventListener childEventListener = new ChildEventListener() {
+            @Override
+            public void onChildAdded(DataSnapshot dataSnapshot, String previousChildName) {
+                Log.d(TAG, "onChildAdded:" + dataSnapshot.getKey());
+                Log.d(TAG, dataSnapshot.getKey());
+                favoriteAlbumList.add(dataSnapshot.getValue(AlbumInfo.class));
+                initializeGrid();
+            }
 
+            @Override
+            public void onChildChanged(DataSnapshot dataSnapshot, String previousChildName) {
+                Log.d(TAG, "onChildChanged:" + dataSnapshot.getKey());
+
+            }
+
+            @Override
+            public void onChildRemoved(DataSnapshot dataSnapshot) {
+                Log.d(TAG, "onChildRemoved:" + dataSnapshot.getKey());
+
+                // ...
+            }
+
+            @Override
+            public void onChildMoved(DataSnapshot dataSnapshot, String s) {
+
+            }
+
+            @Override
+            public void onCancelled(DatabaseError databaseError) {
+
+            }
+        } ;
+        FirebaseUser user = FirebaseAuth.getInstance().getCurrentUser();
+        String uid = user.getUid();
+        mDatabase.child("users").child(uid).child("favorites").addChildEventListener(childEventListener);
+        initializeGrid();
     }
 
     private void initializeGrid(){
@@ -117,7 +150,9 @@ public class Favorites extends AppCompatActivity {
         }
 
         public int getCount() {
-            return 8; //hardcoded for testing
+            //Log.d(TAG, "Lenght in ImageAdapter "+ favoriteAlbumList.size());
+            //return 8;
+            return favoriteAlbumList.size();
             //return favoriteAlbumList.size();
         }
 
@@ -146,8 +181,8 @@ public class Favorites extends AppCompatActivity {
 
             int width = metrics.widthPixels;
             int height = metrics.heightPixels;
-            String //urlStr = favoriteAlbumList.get(position).getAlbumArt();
-            urlStr = "http://www.billboard.com/files/styles/900_wide/public/media/Joy-Division-Unknown-Pleasures-album-covers-billboard-1000x1000.jpg";
+            String urlStr = favoriteAlbumList.get(position).getAlbumArt();
+            //urlStr = "http://www.billboard.com/files/styles/900_wide/public/media/Joy-Division-Unknown-Pleasures-album-covers-billboard-1000x1000.jpg";
             URL url = null;
                 // hardcoded for testing
                 AlbumURL albumUrl = new AlbumURL();
@@ -187,12 +222,6 @@ public class Favorites extends AppCompatActivity {
             }
             return bmp;
         }
-/*
-        @Override
-        protected void onPostExecute(ArrayList<AlbumEntry> list) {
-            xmlResponse = list;
-        }
-*/
     }
 
 

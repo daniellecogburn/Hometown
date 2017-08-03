@@ -80,7 +80,7 @@ public class ListCities extends AppCompatActivity {
         }
         else{
             closestCity = getClosestCity();
-            adapterArr.set(0, "Your Closest City: " + closestCity);
+            adapterArr.add(0, "Your Closest City: " + closestCity);
         }
         ArrayAdapter<String> adapter = new ArrayAdapter<>(this, android.R.layout.simple_list_item_1, adapterArr);
         // Assign adapter to ListView15

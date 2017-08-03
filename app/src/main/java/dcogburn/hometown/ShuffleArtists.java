@@ -22,6 +22,7 @@ import android.view.View;
 import android.widget.Button;
 import android.widget.ImageView;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
@@ -48,11 +49,11 @@ public class ShuffleArtists extends AppCompatActivity {
     private TextView mAlbum;
     private ImageView mArt;
     private String city;
-    
+
     private DatabaseReference databaseReference;
 
     private FirebaseAuth firebaseAuth;
-
+    static Context context;
 
     Button saveAlbum;
 
@@ -68,6 +69,7 @@ public class ShuffleArtists extends AppCompatActivity {
         setContentView(R.layout.activity_shuffle_artists);
         Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
         toolbar.setTitle(city);
+        ShuffleArtists.context = getApplicationContext();
         setSupportActionBar(toolbar);
 
         firebaseAuth = FirebaseAuth.getInstance();
@@ -108,7 +110,16 @@ public class ShuffleArtists extends AppCompatActivity {
             @Override
             public void onClick(View view) {
                 AlbumInfo album = albumQueue.remove(0);
-                databaseReference.child("albums").child(album.getAlbumName() + " - " + album.getArtistName()).setValue(album);
+
+                FirebaseUser user = FirebaseAuth.getInstance().getCurrentUser();
+                String uid = user.getUid();
+                if (user != null) {
+                    Log.d("SHUFFLE", uid);
+                } else {
+                    // No user is signed in
+                }
+                Toast.makeText(ShuffleArtists.context, "Album saved to favorites", Toast.LENGTH_LONG).show();
+                databaseReference.child("users").child(uid).child("favorites").child(album.getAlbumName() + " - " + album.getArtistName()).setValue(album);
             }
         });
     }
@@ -162,7 +173,7 @@ public class ShuffleArtists extends AppCompatActivity {
         }
 
         try {
-             album = gen.generateAlbum("city", new Scanner(is));
+             album = gen.generateAlbum(city, new Scanner(is));
         } catch (ExecutionException e) {
             e.printStackTrace();
         } catch (InterruptedException e) {

@@ -28,6 +28,10 @@ public class AlbumInfo {
         rating = 0;
     }
 
+    public AlbumInfo(){
+
+    }
+
     // getters
     public String getAlbumName() {
         return albumName;
