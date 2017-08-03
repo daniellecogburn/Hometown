@@ -57,6 +57,7 @@ public class ShuffleArtists extends AppCompatActivity {
 
     Button favoriteAlbum;
 
+    AlbumInfo thisAlbum;
     int MY_PERMISSIONS = 0;
 
     private ArrayList<AlbumInfo> albumQueue;
@@ -81,15 +82,12 @@ public class ShuffleArtists extends AppCompatActivity {
 
         albumQueue = new ArrayList<>();
 
-        for(int i = 0; i < 2; i ++) {
-            try {
-                albumQueue.add(generateAlbum(city));
-            } catch (IOException e) {
-                e.printStackTrace();
-            }
+        try {
+            albumQueue.add(generateAlbum(city));
+            displayAlbum();
+        } catch (IOException e) {
+            e.printStackTrace();
         }
-
-        displayAlbum();
 
         Button button = (Button) findViewById(R.id.generatealbum);
         favoriteAlbum = (Button) findViewById(R.id.favoriteAlbum);
@@ -97,9 +95,8 @@ public class ShuffleArtists extends AppCompatActivity {
             @Override
             public void onClick(View view) {
                 try {
-                    displayAlbum();
-                    Log.d("DEBUG", " between displayalbum and generate album");
                     generateAlbum(city);
+                    displayAlbum();
                 } catch (IOException e) {
                     e.printStackTrace();
                 }
@@ -109,7 +106,7 @@ public class ShuffleArtists extends AppCompatActivity {
         favoriteAlbum.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                AlbumInfo album = albumQueue.remove(0);
+                AlbumInfo album = thisAlbum;
 
                 FirebaseUser user = FirebaseAuth.getInstance().getCurrentUser();
                 String uid = user.getUid();
@@ -135,12 +132,12 @@ public class ShuffleArtists extends AppCompatActivity {
     }
 
     public void displayAlbum() {
-        AlbumInfo album = albumQueue.remove(0);
-        mArtist.setText(album.getArtistName());
-        mAlbum.setText(album.getAlbumName());
+        thisAlbum = albumQueue.remove(0);
+        mArtist.setText(thisAlbum.getArtistName());
+        mAlbum.setText(thisAlbum.getAlbumName());
         // TODO : THIS CODE TAKES FOREVER
         // make it better
-        new AlbumURL().execute(album.getAlbumArt());
+        new AlbumURL().execute(thisAlbum.getAlbumArt());
     }
 
     public AlbumInfo generateAlbum(String city) throws IOException {
