@@ -1,108 +1,309 @@
-package dcogburn.hometown;
-
-import android.content.Context;
-import android.net.Uri;
-import android.os.Bundle;
-import android.support.v4.app.Fragment;
-import android.view.LayoutInflater;
-import android.view.View;
-import android.view.ViewGroup;
-
-
-/**
- * A simple {@link Fragment} subclass.
- * Activities that contain this fragment must implement the
- * {@link CitiesFragment.OnFragmentInteractionListener} interface
- * to handle interaction events.
- * Use the {@link CitiesFragment#newInstance} factory method to
- * create an instance of this fragment.
- */
-public class CitiesFragment extends Fragment {
-    // TODO: Rename parameter arguments, choose names that match
-    // the fragment initialization parameters, e.g. ARG_ITEM_NUMBER
-    private static final String ARG_PARAM1 = "param1";
-    private static final String ARG_PARAM2 = "param2";
-
-    // TODO: Rename and change types of parameters
-    private String mParam1;
-    private String mParam2;
-
-    private OnFragmentInteractionListener mListener;
-
-    public CitiesFragment() {
-        // Required empty public constructor
-    }
-
-    /**
-     * Use this factory method to create a new instance of
-     * this fragment using the provided parameters.
-     *
-     * @param param1 Parameter 1.
-     * @param param2 Parameter 2.
-     * @return A new instance of fragment CitiesFragment.
-     */
-    // TODO: Rename and change types and number of parameters
-    public static CitiesFragment newInstance(String param1, String param2) {
-        CitiesFragment fragment = new CitiesFragment();
-        Bundle args = new Bundle();
-        args.putString(ARG_PARAM1, param1);
-        args.putString(ARG_PARAM2, param2);
-        fragment.setArguments(args);
-        return fragment;
-    }
-
-    @Override
-    public void onCreate(Bundle savedInstanceState) {
-        super.onCreate(savedInstanceState);
-        if (getArguments() != null) {
-            mParam1 = getArguments().getString(ARG_PARAM1);
-            mParam2 = getArguments().getString(ARG_PARAM2);
-        }
-    }
-
-    @Override
-    public View onCreateView(LayoutInflater inflater, ViewGroup container,
-                             Bundle savedInstanceState) {
-        // Inflate the layout for this fragment
-        return inflater.inflate(R.layout.fragment_cities, container, false);
-    }
-
-    // TODO: Rename method, update argument and hook method into UI event
-    public void onButtonPressed(Uri uri) {
-        if (mListener != null) {
-            mListener.onFragmentInteraction(uri);
-        }
-    }
-
-    @Override
-    public void onAttach(Context context) {
-        super.onAttach(context);
-        if (context instanceof OnFragmentInteractionListener) {
-            mListener = (OnFragmentInteractionListener) context;
-        } else {
-            throw new RuntimeException(context.toString()
-                    + " must implement OnFragmentInteractionListener");
-        }
-    }
-
-    @Override
-    public void onDetach() {
-        super.onDetach();
-        mListener = null;
-    }
-
-    /**
-     * This interface must be implemented by activities that contain this
-     * fragment to allow an interaction in this fragment to be communicated
-     * to the activity and potentially other fragments contained in that
-     * activity.
-     * <p>
-     * See the Android Training lesson <a href=
-     * "http://developer.android.com/training/basics/fragments/communicating.html"
-     * >Communicating with Other Fragments</a> for more information.
-     */
-    public interface OnFragmentInteractionListener {
-        // TODO: Update argument type and name
-        void onFragmentInteraction(Uri uri);
-    }
-}
+//package dcogburn.hometown;
+//
+//import android.*;
+//import android.content.Context;
+//import android.content.Intent;
+//import android.content.pm.PackageManager;
+//import android.location.Location;
+//import android.location.LocationListener;
+//import android.location.LocationManager;
+//import android.net.Uri;
+//import android.os.Bundle;
+//import android.support.v4.app.ActivityCompat;
+//import android.support.v4.app.Fragment;
+//import android.support.v4.content.ContextCompat;
+//import android.support.v4.widget.DrawerLayout;
+//import android.support.v7.widget.Toolbar;
+//import android.util.Log;
+//import android.view.LayoutInflater;
+//import android.view.Menu;
+//import android.view.MenuItem;
+//import android.view.View;
+//import android.view.ViewGroup;
+//import android.widget.AdapterView;
+//import android.widget.ArrayAdapter;
+//import android.widget.ListView;
+//
+//import java.util.ArrayList;
+//import java.util.Arrays;
+//import java.util.HashMap;
+//
+//import static dcogburn.hometown.ShuffleArtists.context;
+//
+//
+///**
+// * A simple {@link Fragment} subclass.
+// * Activities that contain this fragment must implement the
+// * {@link CitiesFragment.OnFragmentInteractionListener} interface
+// * to handle interaction events.
+// * Use the {@link CitiesFragment#newInstance} factory method to
+// * create an instance of this fragment.
+// */
+//public class CitiesFragment extends Fragment {
+//    String TAG = "ListCities ";
+//    final int MY_PERMISSIONS = 0;
+//    private ListView mListView;
+//    ArrayList<String> cityNames = new ArrayList<String>(Arrays.asList("Austin", "Dallas", "Denton", "El Paso", "Houston", "Lubbock", "San Antonio"));
+//    private static Context context;
+//    ListView listView;
+//    String closestCity;
+//    boolean hasPermissions;
+//
+//    DrawerLayout mDrawerLayout;
+//    // TODO: Rename parameter arguments, choose names that match
+//    // the fragment initialization parameters, e.g. ARG_ITEM_NUMBER
+//    private static final String ARG_PARAM1 = "param1";
+//    private static final String ARG_PARAM2 = "param2";
+//
+//    // TODO: Rename and change types of parameters
+//    private String mParam1;
+//    private String mParam2;
+//
+//    private OnFragmentInteractionListener mListener;
+//
+//    public CitiesFragment() {
+//        // Required empty public constructor
+//    }
+//
+//    /**
+//     * Use this factory method to create a new instance of
+//     * this fragment using the provided parameters.
+//     *
+//     * @param param1 Parameter 1.
+//     * @param param2 Parameter 2.
+//     * @return A new instance of fragment CitiesFragment.
+//     */
+//    // TODO: Rename and change types and number of parameters
+//    public static CitiesFragment newInstance(String param1, String param2) {
+//        CitiesFragment fragment = new CitiesFragment();
+//        Bundle args = new Bundle();
+//        args.putString(ARG_PARAM1, param1);
+//        args.putString(ARG_PARAM2, param2);
+//        fragment.setArguments(args);
+//        return fragment;
+//    }
+//
+//    @Override
+//    public void onCreate(Bundle savedInstanceState) {
+//        super.onCreate(savedInstanceState);
+//        if (getArguments() != null) {
+//            mParam1 = getArguments().getString(ARG_PARAM1);
+//            mParam2 = getArguments().getString(ARG_PARAM2);
+//        }
+//    }
+//
+//    @Override
+//    public View onCreateView(LayoutInflater inflater, ViewGroup container,
+//                             Bundle savedInstanceState) {
+//        setContentView(R.layout.activity_list_cities);
+//        Toolbar toolbar = (Toolbar) view.findViewById(R.id.toolbar);
+//        setSupportActionBar(toolbar);
+//        CitiesFragment.context = getApplicationContext();
+//
+//        if (ContextCompat.checkSelfPermission(context,
+//                android.Manifest.permission.ACCESS_COARSE_LOCATION)
+//                != PackageManager.PERMISSION_GRANTED) {
+//            hasPermissions = false;
+//        }
+//        else{
+//            hasPermissions = true;
+//        }
+//
+//
+//        ActivityCompat.requestPermissions(this, new String[]{android.Manifest.permission.ACCESS_COARSE_LOCATION}, MY_PERMISSIONS);
+//
+//        Log.d(TAG, "in onCreate");
+//
+//        ArrayList<String> adapterArr = cityNames;
+//        if (!hasPermissions){
+//            adapterArr.add(0, "Please change your settings to give Hometown access to your Location.");
+//        }
+//        else{
+//            closestCity = getClosestCity();
+//            adapterArr.add(0, "Your Closest City: " + closestCity);
+//        }
+//        ArrayAdapter<String> adapter = new ArrayAdapter<>(this, android.R.layout.simple_list_item_1, adapterArr);
+//        // Assign adapter to ListView15
+//        listView = (ListView) findViewById(R.id.cities_list_view);
+//        listView.setAdapter(adapter);
+//        listView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
+//            @Override
+//            public void onItemClick(AdapterView<?> adapterView, View view, int i, long l) {
+//                String value = (String) listView.getItemAtPosition(i);
+//                Intent intent = new Intent(getApplicationContext(), ShuffleArtists.class);
+//                intent.setFlags(Intent.FLAG_ACTIVITY_REORDER_TO_FRONT);
+//                intent.putExtra("city", cityNames.get(i));
+//                if (i == 0){
+//                    if (closestCity != null) {
+//                        intent.putExtra("city", closestCity);
+//                    }
+//                    else{
+//                        return;
+//                    }
+//                }
+//                startActivity(intent);
+//            }
+//        });
+//
+//    }
+//
+//    @Override
+//    public void onRequestPermissionsResult(int requestCode,
+//                                           String permissions[], int[] grantResults) {
+//        switch (requestCode) {
+//            case MY_PERMISSIONS: {
+//                // If request is cancelled, the result arrays are empty.
+//                if (grantResults.length > 0 && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
+//                    if (!hasPermissions){
+//                        Intent intent = new Intent(this, ListCities.class);
+//                        finish();
+//                        startActivity(intent);
+//
+//                    }
+//
+//                } else {
+//                    hasPermissions = false;
+//                    closestCity = null;
+//                }
+//                return;
+//            }
+//
+//            // other 'case' lines to check for other
+//            // permissions this app might request
+//        }
+//    }
+//
+//    @Override
+//    public boolean onCreateOptionsMenu(Menu menu) {
+//        // Inflate the menu; this adds items to the action bar if it is present.
+//        getMenuInflater().inflate(R.menu.menu_list_cities, menu);
+//        return true;
+//    }
+//
+//    @Override
+//    public boolean onOptionsItemSelected(MenuItem item) {
+//        // Handle action bar item clicks here. The action bar will
+//        // automatically handle clicks on the Home/Up button, so long
+//        // as you specify a parent activity in AndroidManifest.xml.
+//        int id = item.getItemId();
+//
+//        //noinspection SimplifiableIfStatement
+//        if (id == R.id.action_settings) {
+//            return true;
+//        }
+//
+//        return super.onOptionsItemSelected(item);
+//    }
+//
+//
+//    private String getClosestCity(){
+//        // Acquire a reference to the system Location Manager
+//        LocationManager locationManager = (LocationManager) this.getSystemService(Context.LOCATION_SERVICE);
+//
+//// Define a listener that responds to location updates
+//
+//        LocationListener locationListener = new LocationListener() {
+//            public void onLocationChanged(Location location) {
+//                // Called when a new location is found by the network location provider.
+//                //makeUseOfNewLocation(location);
+//            }
+//            public void onStatusChanged(String provider, int status, Bundle extras) {
+//            }
+//            public void onProviderEnabled(String provider) {
+//            }
+//            public void onProviderDisabled(String provider) {
+//            }
+//        };
+//
+//        if (ActivityCompat.checkSelfPermission(this, android.Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED && ActivityCompat.checkSelfPermission(this, android.Manifest.permission.ACCESS_COARSE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
+//            ActivityCompat.requestPermissions(this, new String[] { android.Manifest.permission.ACCESS_COARSE_LOCATION }, MY_PERMISSIONS);
+//            return null;
+//        }
+//        locationManager.requestLocationUpdates(LocationManager.NETWORK_PROVIDER, 0, 0, locationListener);
+//        String locationProvider = LocationManager.NETWORK_PROVIDER;
+//        Location lastKnownLocation = locationManager.getLastKnownLocation(locationProvider);
+//        Log.d(TAG, lastKnownLocation.toString());
+//
+//        double userLat = Math.abs(lastKnownLocation.getLatitude());
+//        double userLong = Math.abs(lastKnownLocation.getLongitude());
+//        Log.d("userlat", String.valueOf(userLat));
+//        Log.d("userlong", String.valueOf(userLong));
+//
+//        HashMap<String, Double> latMap = new HashMap();
+//        latMap.put("Austin", 30.2672);
+//        latMap.put("Dallas", 32.7767);
+//        latMap.put("Denton", 33.2148);
+//        latMap.put("El Paso", 31.7619);
+//        latMap.put("Houston", 29.7604);
+//        latMap.put("Lubbock", 33.5779);
+//        latMap.put("San Antonio", 29.4241);
+//
+//        HashMap<String, Double> longMap = new HashMap();
+//        longMap.put("Austin", 97.7431);
+//        longMap.put("Dallas", 96.7970);
+//        longMap.put("Denton", 97.1331);
+//        longMap.put("El Paso", 106.4850);
+//        longMap.put("Houston", 95.3698);
+//        longMap.put("Lubbock", 101.8552);
+//        longMap.put("San Antonio", 98.4936);
+//
+//
+//        double shortestDist = 1000;
+//        double dist = 0;
+//        for (int i = 0; i < cityNames.size(); i++){
+//            Log.d(TAG, cityNames.get(i));
+//            double cityLat = Math.abs(latMap.get(cityNames.get(i)));
+//            double cityLong = Math.abs(longMap.get(cityNames.get(i)));
+//            dist = Math.sqrt((Math.pow(cityLat - userLat,2) + Math.pow(cityLong-userLong, 2)));
+//            Log.d(cityNames.get(i), String.valueOf(dist));
+//            if (shortestDist > dist){
+//                shortestDist = dist;
+//                closestCity = cityNames.get(i);
+//            }
+//        }
+//        if (dist > 8){
+//            closestCity = "None!";
+//        }
+//        Log.d(TAG, closestCity);
+//        return closestCity;
+//    }
+//
+//    // TODO: Rename method, update argument and hook method into UI event
+//    public void onButtonPressed(Uri uri) {
+//        if (mListener != null) {
+//            mListener.onFragmentInteraction(uri);
+//        }
+//    }
+//
+//    @Override
+//    public void onAttach(Context context) {
+//        super.onAttach(context);
+//        if (context instanceof OnFragmentInteractionListener) {
+//            mListener = (OnFragmentInteractionListener) context;
+//        } else {
+//            throw new RuntimeException(context.toString()
+//                    + " must implement OnFragmentInteractionListener");
+//        }
+//    }
+//
+//    @Override
+//    public void onDetach() {
+//        super.onDetach();
+//        mListener = null;
+//    }
+//
+//    /**
+//     * This interface must be implemented by activities that contain this
+//     * fragment to allow an interaction in this fragment to be communicated
+//     * to the activity and potentially other fragments contained in that
+//     * activity.
+//     * <p>
+//     * See the Android Training lesson <a href=
+//     * "http://developer.android.com/training/basics/fragments/communicating.html"
+//     * >Communicating with Other Fragments</a> for more information.
+//     */
+//    public interface OnFragmentInteractionListener {
+//        // TODO: Update argument type and name
+//        void onFragmentInteraction(Uri uri);
+//    }
+//}

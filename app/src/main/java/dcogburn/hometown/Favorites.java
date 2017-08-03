@@ -180,7 +180,6 @@ public class Favorites extends AppCompatActivity {
             getWindowManager().getDefaultDisplay().getMetrics(metrics);
 
             int width = metrics.widthPixels;
-            int height = metrics.heightPixels;
             String urlStr = favoriteAlbumList.get(position).getAlbumArt();
             //urlStr = "http://www.billboard.com/files/styles/900_wide/public/media/Joy-Division-Unknown-Pleasures-album-covers-billboard-1000x1000.jpg";
             URL url = null;
@@ -223,6 +222,4 @@ public class Favorites extends AppCompatActivity {
             return bmp;
         }
     }
-
-
 }

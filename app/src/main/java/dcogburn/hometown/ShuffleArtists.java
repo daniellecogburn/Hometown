@@ -20,6 +20,7 @@ import android.support.v7.widget.Toolbar;
 import android.util.Log;
 import android.view.View;
 import android.widget.Button;
+import android.widget.ImageButton;
 import android.widget.ImageView;
 import android.widget.TextView;
 import android.widget.Toast;
@@ -55,7 +56,8 @@ public class ShuffleArtists extends AppCompatActivity {
     private FirebaseAuth firebaseAuth;
     static Context context;
 
-    Button favoriteAlbum;
+    ImageButton favoriteAlbum;
+    ImageButton saveAlbum;
 
     AlbumInfo thisAlbum;
     int MY_PERMISSIONS = 0;
@@ -89,8 +91,9 @@ public class ShuffleArtists extends AppCompatActivity {
             e.printStackTrace();
         }
 
-        Button button = (Button) findViewById(R.id.generatealbum);
-        favoriteAlbum = (Button) findViewById(R.id.favoriteAlbum);
+        ImageButton button = (ImageButton) findViewById(R.id.generatealbum);
+        favoriteAlbum = (ImageButton) findViewById(R.id.favoriteAlbum);
+        saveAlbum = (ImageButton) findViewById(R.id.saveAlbum);
         button.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
@@ -117,6 +120,23 @@ public class ShuffleArtists extends AppCompatActivity {
                 }
                 Toast.makeText(ShuffleArtists.context, "Album saved to favorites", Toast.LENGTH_LONG).show();
                 databaseReference.child("users").child(uid).child("favorites").child(album.getAlbumName() + " - " + album.getArtistName()).setValue(album);
+            }
+        });
+
+        saveAlbum.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                AlbumInfo album = thisAlbum;
+
+                FirebaseUser user = FirebaseAuth.getInstance().getCurrentUser();
+                String uid = user.getUid();
+                if (user != null) {
+                    Log.d("SHUFFLE", uid);
+                } else {
+                    // No user is signed in
+                }
+                Toast.makeText(ShuffleArtists.context, "Album saved to Saved for Later", Toast.LENGTH_LONG).show();
+                databaseReference.child("users").child(uid).child("save").child(album.getAlbumName() + " - " + album.getArtistName()).setValue(album);
             }
         });
     }
@@ -170,7 +190,7 @@ public class ShuffleArtists extends AppCompatActivity {
         }
 
         try {
-             album = gen.generateAlbum(city, new Scanner(is));
+             album = gen.generateAlbum("city", new Scanner(is));
         } catch (ExecutionException e) {
             e.printStackTrace();
         } catch (InterruptedException e) {
