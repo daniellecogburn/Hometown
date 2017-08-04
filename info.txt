@@ -1,0 +1,16 @@
+Team Members:
+Danielle Cogburn - dmc3492
+Ben Randall - bgr475
+Travis Garbe - tmg2375
+
+Special instructions:
+Creation of an account, so you can save the information you’d like to keep and go back to the albums you marked as a favorite. When opening the cities view, deny the permissions as accepting will cause a crash at the moment. Must be connected to the internet. Password must be at least 6 characters. Best run on an actual device. 
+
+List of features:
+When you open the app for the first time, you will need to create an account, which will take you to a navigation screen. If you click cities on that screen, you will be taken to a list of Texas cities and it will notify you which city you are closest to, if you click a city it will pick a random artist from the city to highlight, you can continually generate random albums from that city with a button on that screen. If you like the album, you can save it and it will add it to your favorites list which you can access by backing back to the navigating screen and clicking favorites. If you click an album on the favorites page the album’s info will appear.
+
+Code obtained from other resources:
+All the classes are made by us, and the vast majority of the code is written by us, with the exception of a couple of lines of code involving firebase. We use the last.fm API as well as firebase as a data service
+
+Code completed ourselves: 
+All of the classes along with the code in them are written by us

@@ -1,0 +1,1 @@
+The google services json file needs to be put in the app directory in the project directory (rather than the android directory). When opening the cities view, deny access to your location for the time being. The build gradles are included as they give access to the backend.
