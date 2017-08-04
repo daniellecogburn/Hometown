@@ -12,7 +12,7 @@ public class AlbumInfo {
     private String albumName;
     private String artistName;
     private String albumArt;
-    private String city; // not string?
+    private String city;
 
     // user submitted info
     private int rating; // rating 1-10, step size = .5

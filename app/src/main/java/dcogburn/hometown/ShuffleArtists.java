@@ -1,25 +1,16 @@
 package dcogburn.hometown;
 
-import android.Manifest;
 import android.content.Context;
 import android.content.Intent;
-import android.content.pm.PackageManager;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
-import android.location.Location;
-import android.location.LocationListener;
-import android.location.LocationManager;
-import android.media.Image;
+import android.graphics.drawable.Drawable;
 import android.os.AsyncTask;
 import android.os.Bundle;
-import android.support.design.widget.FloatingActionButton;
-import android.support.design.widget.Snackbar;
-import android.support.v4.app.ActivityCompat;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
 import android.util.Log;
 import android.view.View;
-import android.widget.Button;
 import android.widget.ImageButton;
 import android.widget.ImageView;
 import android.widget.TextView;
@@ -30,39 +21,37 @@ import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 
-import org.w3c.dom.Text;
-
-import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
 import java.net.MalformedURLException;
 import java.net.URL;
 import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.Queue;
 import java.util.Scanner;
 import java.util.concurrent.ExecutionException;
 
 public class ShuffleArtists extends AppCompatActivity {
 
-    // Various text display
-    private TextView mArtist;
-    private TextView mAlbum;
-    private ImageView mArt;
-    private String city;
-
-    private DatabaseReference databaseReference;
-
-    private FirebaseAuth firebaseAuth;
     static Context context;
 
+    // Various display
+    private TextView mArtist;
+    private TextView mAlbum;
+    private String city;
+    private ImageView mImage;
+    private Drawable defaultImage;
+
+    // Firebase
+    private DatabaseReference databaseReference;
+    private FirebaseAuth firebaseAuth;
+
+    // Buttons
+    ImageButton generateAlbum;
     ImageButton favoriteAlbum;
     ImageButton saveAlbum;
 
+    // album info
     AlbumInfo thisAlbum;
-    int MY_PERMISSIONS = 0;
-
-    private ArrayList<AlbumInfo> albumQueue;
+    private ArrayList<AlbumInfo> albumQueue = new ArrayList<>();
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -75,42 +64,47 @@ public class ShuffleArtists extends AppCompatActivity {
         ShuffleArtists.context = getApplicationContext();
         setSupportActionBar(toolbar);
 
+        // firebase authentication
         firebaseAuth = FirebaseAuth.getInstance();
         databaseReference = FirebaseDatabase.getInstance().getReference();
 
-
+        // album details listed on screen
         mArtist = (TextView) findViewById(R.id.artist);
         mAlbum = (TextView) findViewById(R.id.album);
-
-        albumQueue = new ArrayList<>();
-
+        mImage = (ImageView) findViewById(R.id.art);
+        defaultImage = getResources().getDrawable(R.drawable.albumcover);
         try {
-            albumQueue.add(generateAlbum(city));
+            generateAlbum();
             displayAlbum();
         } catch (IOException e) {
             e.printStackTrace();
+        } catch (InterruptedException e) {
+            e.printStackTrace();
         }
 
-        ImageButton button = (ImageButton) findViewById(R.id.generatealbum);
-        favoriteAlbum = (ImageButton) findViewById(R.id.favoriteAlbum);
-        saveAlbum = (ImageButton) findViewById(R.id.saveAlbum);
-        button.setOnClickListener(new View.OnClickListener() {
+        // new album button
+        generateAlbum = (ImageButton) findViewById(R.id.generatealbum);
+        generateAlbum.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
                 try {
-                    generateAlbum(city);
+                    mImage.setImageDrawable(defaultImage);
+                    generateAlbum();
                     displayAlbum();
                 } catch (IOException e) {
+                    e.printStackTrace();
+                } catch (InterruptedException e) {
                     e.printStackTrace();
                 }
             }
         });
 
+        // save album button
+        favoriteAlbum = (ImageButton) findViewById(R.id.favoriteAlbum);
         favoriteAlbum.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
                 AlbumInfo album = thisAlbum;
-
                 FirebaseUser user = FirebaseAuth.getInstance().getCurrentUser();
                 String uid = user.getUid();
                 if (user != null) {
@@ -123,6 +117,8 @@ public class ShuffleArtists extends AppCompatActivity {
             }
         });
 
+        // save album button
+        saveAlbum = (ImageButton) findViewById(R.id.saveAlbum);
         saveAlbum.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
@@ -146,25 +142,25 @@ public class ShuffleArtists extends AppCompatActivity {
         super.onResume();
         Intent intent = getIntent();
         city = intent.getStringExtra("city");
-
         Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
         toolbar.setTitle(city);
     }
 
+    // display album on page
     public void displayAlbum() {
         thisAlbum = albumQueue.remove(0);
         mArtist.setText(thisAlbum.getArtistName());
         mAlbum.setText(thisAlbum.getAlbumName());
-        // TODO : THIS CODE TAKES FOREVER
-        // make it better
         new AlbumURL().execute(thisAlbum.getAlbumArt());
     }
 
-    public AlbumInfo generateAlbum(String city) throws IOException {
+    // generate new AlbumInfo
+    public void generateAlbum() throws IOException, InterruptedException {
         AlbumGenerator gen = new AlbumGenerator();
         AlbumInfo album = null;
         InputStream is = null;
 
+        // get text file of artists
         switch (city.toLowerCase()) {
             case "austin":
                 is = getResources().openRawResource(R.raw.austin);
@@ -189,27 +185,22 @@ public class ShuffleArtists extends AppCompatActivity {
                 break;
         }
 
+        // generate album
         try {
-             album = gen.generateAlbum("city", new Scanner(is));
+            album = gen.generateAlbum(city, new Scanner(is));
+            albumQueue.add(album);
         } catch (ExecutionException e) {
             e.printStackTrace();
-        } catch (InterruptedException e) {
-            e.printStackTrace();
         }
-
         Log.d("ALBUM", "artist: " + album.getArtistName());
         Log.d("ALBUM", "album: " + album.getAlbumName());
         Log.d("ALBUM", "art: " + album.getAlbumArt());
-
-        albumQueue.add(album);
-
-        return album;
     }
 
+    // image request
     class AlbumURL extends AsyncTask<String, Void, Bitmap> {
 
         protected Bitmap doInBackground(String... image) {
-            // search for url, returns xml of albums
             URL url = null;
             try {
                 url = new URL(image[0]);
@@ -228,8 +219,7 @@ public class ShuffleArtists extends AppCompatActivity {
 
         @Override
         protected void onPostExecute(Bitmap bmp) {
-            ImageView image = (ImageView) findViewById(R.id.art);
-            image.setImageBitmap(bmp);
+            mImage.setImageBitmap(bmp);
         }
     }
 
