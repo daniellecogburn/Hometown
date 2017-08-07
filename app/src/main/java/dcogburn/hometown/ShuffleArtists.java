@@ -25,6 +25,7 @@ import android.widget.ImageView;
 import android.widget.RatingBar;
 import android.widget.TextView;
 import android.widget.Toast;
+import android.widget.ToggleButton;
 
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
@@ -114,7 +115,6 @@ public class ShuffleArtists extends AppCompatActivity implements RateFavoriteDia
             });
 
         createButtons();
-
     }
 
     @Override
@@ -179,14 +179,11 @@ public class ShuffleArtists extends AppCompatActivity implements RateFavoriteDia
             }
         });
 
-        // save album button
-        saveAlbum = (ImageButton) findViewById(R.id.saveAlbum);
-
         saveAlbum.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
                 AlbumInfo album = thisAlbum;
-
+                saveAlbum.setImageResource(R.drawable.ic_action_play_dark);
                 FirebaseUser user = FirebaseAuth.getInstance().getCurrentUser();
                 String uid = user.getUid();
                 if (user != null) {

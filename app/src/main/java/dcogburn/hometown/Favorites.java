@@ -48,6 +48,7 @@ import java.net.MalformedURLException;
 import java.net.URL;
 import java.util.ArrayList;
 import java.util.Scanner;
+import java.util.StringTokenizer;
 import java.util.concurrent.ExecutionException;
 
 import static dcogburn.hometown.R.id.imageView;
@@ -57,6 +58,7 @@ import static dcogburn.hometown.R.id.imageView;
 public class Favorites extends AppCompatActivity {
     private GridView albumGridView;
     public ArrayList<AlbumInfo> favoriteAlbumList;
+    DatabaseReference mDatabase;
     private String TAG = "Favorites";
     private static Context context;
     String city = "austin";
@@ -71,7 +73,6 @@ public class Favorites extends AppCompatActivity {
 
         //hardcoded
         favoriteAlbumList = new ArrayList<>();
-        DatabaseReference mDatabase;
         mDatabase = FirebaseDatabase.getInstance().getReference();
 
         ChildEventListener childEventListener = new ChildEventListener() {
@@ -112,6 +113,12 @@ public class Favorites extends AppCompatActivity {
         initializeGrid();
     }
 
+    @Override
+    protected void onResume(){
+        super.onResume();
+        initializeGrid();
+    }
+
     private void initializeGrid(){
         albumGridView = (GridView) findViewById(R.id.album_grid);
         albumGridView.setAdapter(new ImageAdapter(this));
@@ -125,17 +132,24 @@ public class Favorites extends AppCompatActivity {
     }
 
     private void showDialog(AlbumInfo albumInfo){
+        final AlbumInfo innerAlbum = albumInfo;
         AlertDialog.Builder builder = new AlertDialog.Builder(this);
-        builder.setMessage(albumInfo.getAlbumName() + "\nRating:" + albumInfo.getRating())
+        builder.setMessage(albumInfo.getAlbumName() + "\n\nRating: " + albumInfo.getRating())
                 .setTitle(albumInfo.getArtistName());
         builder.setPositiveButton(R.string.ok, new DialogInterface.OnClickListener() {
             public void onClick(DialogInterface dialog, int id) {
                 // User clicked OK button
             }
         });
-        builder.setNegativeButton(R.string.cancel, new DialogInterface.OnClickListener() {
+        builder.setNegativeButton(R.string.delete, new DialogInterface.OnClickListener() {
             public void onClick(DialogInterface dialog, int id) {
-                // User cancelled the dialog
+                FirebaseUser user = FirebaseAuth.getInstance().getCurrentUser();
+                String uid = user.getUid();
+                mDatabase.child("users").child(uid).child("favorites").child(innerAlbum.getAlbumName() + " - " + innerAlbum.getArtistName()).removeValue();
+                int ind = favoriteAlbumList.indexOf(innerAlbum);
+                Log.d(TAG, String.valueOf(ind));
+                favoriteAlbumList.remove(ind);
+                initializeGrid();
             }
         });
         AlertDialog dialog = builder.create();
@@ -150,10 +164,7 @@ public class Favorites extends AppCompatActivity {
         }
 
         public int getCount() {
-            //Log.d(TAG, "Lenght in ImageAdapter "+ favoriteAlbumList.size());
-            //return 8;
             return favoriteAlbumList.size();
-            //return favoriteAlbumList.size();
         }
 
         public Object getItem(int position) {

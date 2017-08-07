@@ -85,9 +85,11 @@
                 android:id="@+id/saveAlbum"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
+                android:checked="false"
                 android:layout_weight=".25"
                 android:background="@android:drawable/screen_background_light_transparent"
-                android:src="@drawable/ic_action_save" />
+                android:src="@drawable/ic_action_save"
+                 />
 
             <ImageButton
                 android:id="@+id/playSong"

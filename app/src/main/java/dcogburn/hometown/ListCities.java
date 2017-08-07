@@ -57,6 +57,7 @@ public class ListCities extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_list_cities);
         Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
+        toolbar.setTitle("Shuffle Artists by Hometown");
         setSupportActionBar(toolbar);
         ListCities.context = getApplicationContext();
 
