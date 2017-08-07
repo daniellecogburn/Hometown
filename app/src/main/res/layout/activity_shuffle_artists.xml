@@ -95,6 +95,7 @@
                 android:layout_height="wrap_content"
                 android:layout_weight=".25"
                 android:background="@android:drawable/screen_background_light_transparent"
+                android:onClick="playSong"
                 android:src="@drawable/ic_action_play" />
 
             <ImageButton

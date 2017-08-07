@@ -1,6 +1,14 @@
 package dcogburn.hometown;
 
+import android.Manifest;
+import android.app.Activity;
+import android.app.AlertDialog;
+import android.app.Dialog;
+import android.app.DialogFragment;
+import android.app.Fragment;
+import android.app.FragmentTransaction;
 import android.content.Context;
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
@@ -10,9 +18,11 @@ import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
 import android.util.Log;
+import android.view.LayoutInflater;
 import android.view.View;
 import android.widget.ImageButton;
 import android.widget.ImageView;
+import android.widget.RatingBar;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -29,7 +39,7 @@ import java.util.ArrayList;
 import java.util.Scanner;
 import java.util.concurrent.ExecutionException;
 
-public class ShuffleArtists extends AppCompatActivity {
+public class ShuffleArtists extends AppCompatActivity implements RateFavoriteDialog.NoticeDialogListener  {
 
     static Context context;
 
@@ -40,6 +50,8 @@ public class ShuffleArtists extends AppCompatActivity {
     private ImageView mImage;
     private Drawable defaultImage;
 
+    private static RatingBar ratingBar;
+
     // Firebase
     private DatabaseReference databaseReference;
     private FirebaseAuth firebaseAuth;
@@ -48,6 +60,7 @@ public class ShuffleArtists extends AppCompatActivity {
     ImageButton generateAlbum;
     ImageButton favoriteAlbum;
     ImageButton saveAlbum;
+    ImageButton playButton;
 
     // album info
     AlbumInfo thisAlbum;
@@ -63,6 +76,7 @@ public class ShuffleArtists extends AppCompatActivity {
         toolbar.setTitle(city);
         ShuffleArtists.context = getApplicationContext();
         setSupportActionBar(toolbar);
+        ratingBar = (RatingBar) findViewById(R.id.rating_bar);
 
         // firebase authentication
         firebaseAuth = FirebaseAuth.getInstance();
@@ -84,7 +98,43 @@ public class ShuffleArtists extends AppCompatActivity {
 
         // new album button
         generateAlbum = (ImageButton) findViewById(R.id.generatealbum);
-        generateAlbum.setOnClickListener(new View.OnClickListener() {
+        generateAlbum.setOnClickListener(new View.OnClickListener(){
+                @Override
+                public void onClick(View view) {
+                    try {
+                        mImage.setImageDrawable(defaultImage);
+                        generateAlbum();
+                        displayAlbum();
+                    } catch (IOException e) {
+                        e.printStackTrace();
+                    } catch (InterruptedException e) {
+                        e.printStackTrace();
+                    }
+                }
+            });
+
+        createButtons();
+
+    }
+
+    @Override
+    public void onDialogPositiveClick(float rating) {
+        // User touched the dialog's positive button
+        Log.d("rfd", String.valueOf(rating));
+    }
+
+    @Override
+    public void onDialogNegativeClick(DialogFragment dialog) {
+        // User touched the dialog's negative button
+
+    }
+
+
+    public void createButtons(){
+        ImageButton button = (ImageButton) findViewById(R.id.generatealbum);
+        favoriteAlbum = (ImageButton) findViewById(R.id.favoriteAlbum);
+        saveAlbum = (ImageButton) findViewById(R.id.saveAlbum);
+        button.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
                 try {
@@ -104,7 +154,24 @@ public class ShuffleArtists extends AppCompatActivity {
         favoriteAlbum.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
+
                 AlbumInfo album = thisAlbum;
+
+                FragmentTransaction ft = getFragmentManager().beginTransaction();
+                Fragment prev = getFragmentManager().findFragmentByTag("dialog");
+                if (prev != null) {
+                    ft.remove(prev);
+                }
+                ft.addToBackStack(null);
+
+                // Create and show the dialog.
+
+                DialogFragment rfg = new RateFavoriteDialog();
+                rfg.show(ft, "dialog");
+
+                        album = thisAlbum;
+
+
                 FirebaseUser user = FirebaseAuth.getInstance().getCurrentUser();
                 String uid = user.getUid();
                 if (user != null) {
@@ -119,6 +186,7 @@ public class ShuffleArtists extends AppCompatActivity {
 
         // save album button
         saveAlbum = (ImageButton) findViewById(R.id.saveAlbum);
+
         saveAlbum.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
@@ -135,6 +203,13 @@ public class ShuffleArtists extends AppCompatActivity {
                 databaseReference.child("users").child(uid).child("save").child(album.getAlbumName() + " - " + album.getArtistName()).setValue(album);
             }
         });
+
+        playButton = (ImageButton) findViewById(R.id.playSong);
+    }
+
+    public void playSong(View view){
+        Spotify spotify = new Spotify();
+        spotify.makeURL(thisAlbum);
     }
 
     @Override
@@ -224,3 +299,4 @@ public class ShuffleArtists extends AppCompatActivity {
     }
 
 }
+
