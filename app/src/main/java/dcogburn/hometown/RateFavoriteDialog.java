@@ -6,7 +6,10 @@ import android.app.Dialog;
 import android.app.DialogFragment;
 import android.content.DialogInterface;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.LayoutInflater;
+import android.view.View;
+import android.view.ViewGroup;
 import android.widget.RatingBar;
 
 /**
@@ -14,22 +17,26 @@ import android.widget.RatingBar;
  */
 
 public class RateFavoriteDialog extends DialogFragment {
+    String TAG = "RateFavoriteDialog";
+    View view;
+
     @Override
     public Dialog onCreateDialog(Bundle savedInstanceState) {
         // Use the Builder class for convenient dialog construction
         AlertDialog.Builder builder = new AlertDialog.Builder(getActivity());
         LayoutInflater inflater = getActivity().getLayoutInflater();
-        builder.setView(inflater.inflate(R.layout.favorite_dialog, null));
-
+        final View textEntryView = inflater.inflate(R.layout.favorite_dialog, null);
+        builder.setView(textEntryView);
+        final RatingBar ratingBar = textEntryView.findViewById(R.id.rating_bar);
+        ratingBar.setNumStars(5);
 
         builder.setMessage(R.string.rate_this_album)
                 .setPositiveButton(R.string.add_to_favorites, new DialogInterface.OnClickListener() {
                     public void onClick(DialogInterface dialog, int id) {
-                        final RatingBar ratingBar = getView().findViewById(R.id.rating_bar);
-                        ratingBar.setNumStars(5);
+
                         float rating = ratingBar.getRating();
+                        Log.d(TAG, String.valueOf(rating));
                         mListener.onDialogPositiveClick(rating);
-                        //ratingBar.getRating();
                     }
                 })
                 .setNegativeButton(R.string.cancel, new DialogInterface.OnClickListener() {

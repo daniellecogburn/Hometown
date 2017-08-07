@@ -120,7 +120,16 @@ public class ShuffleArtists extends AppCompatActivity implements RateFavoriteDia
     @Override
     public void onDialogPositiveClick(float rating) {
         // User touched the dialog's positive button
-        Log.d("rfd", String.valueOf(rating));
+        thisAlbum.setRating((int) rating);
+        FirebaseUser user = FirebaseAuth.getInstance().getCurrentUser();
+        String uid = user.getUid();
+        if (user != null) {
+            Log.d("SHUFFLE", uid);
+        } else {
+            // No user is signed in
+        }
+        Toast.makeText(ShuffleArtists.context, "Album saved to favorites", Toast.LENGTH_LONG).show();
+        databaseReference.child("users").child(uid).child("favorites").child(thisAlbum.getAlbumName() + " - " + thisAlbum.getArtistName()).setValue(thisAlbum);
     }
 
     @Override
@@ -155,8 +164,6 @@ public class ShuffleArtists extends AppCompatActivity implements RateFavoriteDia
             @Override
             public void onClick(View view) {
 
-                AlbumInfo album = thisAlbum;
-
                 FragmentTransaction ft = getFragmentManager().beginTransaction();
                 Fragment prev = getFragmentManager().findFragmentByTag("dialog");
                 if (prev != null) {
@@ -169,18 +176,6 @@ public class ShuffleArtists extends AppCompatActivity implements RateFavoriteDia
                 DialogFragment rfg = new RateFavoriteDialog();
                 rfg.show(ft, "dialog");
 
-                        album = thisAlbum;
-
-
-                FirebaseUser user = FirebaseAuth.getInstance().getCurrentUser();
-                String uid = user.getUid();
-                if (user != null) {
-                    Log.d("SHUFFLE", uid);
-                } else {
-                    // No user is signed in
-                }
-                Toast.makeText(ShuffleArtists.context, "Album saved to favorites", Toast.LENGTH_LONG).show();
-                databaseReference.child("users").child(uid).child("favorites").child(album.getAlbumName() + " - " + album.getArtistName()).setValue(album);
             }
         });
 
