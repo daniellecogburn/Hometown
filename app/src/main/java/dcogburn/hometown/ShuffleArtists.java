@@ -12,6 +12,7 @@ import android.content.DialogInterface;
 import android.content.Intent;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
+import android.graphics.Canvas;
 import android.graphics.drawable.Drawable;
 import android.os.AsyncTask;
 import android.os.Bundle;
@@ -115,6 +116,10 @@ public class ShuffleArtists extends AppCompatActivity implements RateFavoriteDia
             });
 
         createButtons();
+    }
+
+    protected void onDraw(Canvas canvas) {
+        Log.d("on draw", "in onDraw");
     }
 
     @Override
@@ -248,6 +253,9 @@ public class ShuffleArtists extends AppCompatActivity implements RateFavoriteDia
                 break;
             case "lubbock":
                 is = getResources().openRawResource(R.raw.lubbock);
+                break;
+            case "san antonio":
+                is = getResources().openRawResource(R.raw.san_antonio);
                 break;
         }
 
