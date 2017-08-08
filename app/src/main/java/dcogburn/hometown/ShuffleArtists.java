@@ -62,11 +62,13 @@ public class ShuffleArtists extends AppCompatActivity implements RateFavoriteDia
     ImageButton generateAlbum;
     ImageButton favoriteAlbum;
     ImageButton saveAlbum;
+    private boolean saveAlbumPressed = false;
     ImageButton playButton;
 
     // album info
     AlbumInfo thisAlbum;
     private ArrayList<AlbumInfo> albumQueue = new ArrayList<>();
+
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -98,28 +100,7 @@ public class ShuffleArtists extends AppCompatActivity implements RateFavoriteDia
             e.printStackTrace();
         }
 
-        // new album button
-        generateAlbum = (ImageButton) findViewById(R.id.generatealbum);
-        generateAlbum.setOnClickListener(new View.OnClickListener(){
-                @Override
-                public void onClick(View view) {
-                    try {
-                        mImage.setImageDrawable(defaultImage);
-                        generateAlbum();
-                        displayAlbum();
-                    } catch (IOException e) {
-                        e.printStackTrace();
-                    } catch (InterruptedException e) {
-                        e.printStackTrace();
-                    }
-                }
-            });
-
         createButtons();
-    }
-
-    protected void onDraw(Canvas canvas) {
-        Log.d("on draw", "in onDraw");
     }
 
     @Override
@@ -133,8 +114,9 @@ public class ShuffleArtists extends AppCompatActivity implements RateFavoriteDia
         } else {
             // No user is signed in
         }
-        Toast.makeText(ShuffleArtists.context, "Album saved to favorites", Toast.LENGTH_LONG).show();
+        Toast.makeText(ShuffleArtists.context, "Album saved to favorites", Toast.LENGTH_SHORT).show();
         databaseReference.child("users").child(uid).child("favorites").child(thisAlbum.getAlbumName() + " - " + thisAlbum.getArtistName()).setValue(thisAlbum);
+        favoriteAlbum.setImageResource(R.drawable.ic_action_favorite_pressed);
     }
 
     @Override
@@ -145,25 +127,37 @@ public class ShuffleArtists extends AppCompatActivity implements RateFavoriteDia
 
 
     public void createButtons(){
-        ImageButton button = (ImageButton) findViewById(R.id.generatealbum);
-        favoriteAlbum = (ImageButton) findViewById(R.id.favoriteAlbum);
-        saveAlbum = (ImageButton) findViewById(R.id.saveAlbum);
-        button.setOnClickListener(new View.OnClickListener() {
+
+        // new album button
+        generateAlbum = (ImageButton) findViewById(R.id.generatealbum);
+        generateAlbum.setOnClickListener(new View.OnClickListener(){
             @Override
             public void onClick(View view) {
+
+                // TODO this don't work
+                generateAlbum.setImageResource(R.drawable.ic_action_next_pressed);
+                saveAlbumPressed = false;
+
+                // reset buttons
+                saveAlbum.setImageResource(R.drawable.ic_action_save);
+                favoriteAlbum.setImageResource(R.drawable.ic_action_favorite);
+
                 try {
                     mImage.setImageDrawable(defaultImage);
                     generateAlbum();
                     displayAlbum();
+                    generateAlbum.setImageResource(R.drawable.ic_action_next);
                 } catch (IOException e) {
                     e.printStackTrace();
                 } catch (InterruptedException e) {
                     e.printStackTrace();
                 }
+
+
             }
         });
 
-        // save album button
+        // favorite album button
         favoriteAlbum = (ImageButton) findViewById(R.id.favoriteAlbum);
         favoriteAlbum.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -177,18 +171,19 @@ public class ShuffleArtists extends AppCompatActivity implements RateFavoriteDia
                 ft.addToBackStack(null);
 
                 // Create and show the dialog.
-
                 DialogFragment rfg = new RateFavoriteDialog();
                 rfg.show(ft, "dialog");
 
             }
         });
 
+        // save album button
+        saveAlbum = (ImageButton) findViewById(R.id.saveAlbum);
         saveAlbum.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
                 AlbumInfo album = thisAlbum;
-                saveAlbum.setImageResource(R.drawable.ic_action_play_dark);
+
                 FirebaseUser user = FirebaseAuth.getInstance().getCurrentUser();
                 String uid = user.getUid();
                 if (user != null) {
@@ -196,11 +191,23 @@ public class ShuffleArtists extends AppCompatActivity implements RateFavoriteDia
                 } else {
                     // No user is signed in
                 }
-                Toast.makeText(ShuffleArtists.context, "Album saved to Saved for Later", Toast.LENGTH_LONG).show();
-                databaseReference.child("users").child(uid).child("save").child(album.getAlbumName() + " - " + album.getArtistName()).setValue(album);
+
+                if(!saveAlbumPressed) {
+                    saveAlbum.setImageResource(R.drawable.ic_action_save_pressed);
+                    // Toast.makeText(ShuffleArtists.context, "Album saved to Saved for Later", Toast.LENGTH_SHORT).show();
+                    databaseReference.child("users").child(uid).child("save").child(album.getAlbumName() + " - " + album.getArtistName()).setValue(album);
+                } else {
+                    saveAlbum.setImageResource(R.drawable.ic_action_save);
+                    // Toast.makeText(ShuffleArtists.context, "Album removed from Saved for Later", Toast.LENGTH_SHORT).show();
+                    databaseReference.child("users").child(uid).child("save").child(album.getAlbumName() + " - " + album.getArtistName()).removeValue();
+                }
+
+                saveAlbumPressed = !saveAlbumPressed;
+
             }
         });
 
+        // play song button
         playButton = (ImageButton) findViewById(R.id.playSong);
     }
 
