@@ -34,21 +34,30 @@ public class Spotify {
 
     }
 
-    class Parse extends AsyncTask<String, Void, String> {
+    class Parse extends AsyncTask<AlbumInfo, Void, String> {
+        private void searchAlbum(){
 
-        protected String doInBackground(String... urls) {
+        }
+
+        protected String doInBackground(AlbumInfo... albumInfos) {
             // search for url, returns xml of albums
             String token = "";
             //Log.d("DEBUG", "in doInBackground");
             try {
-                URL url = new URL("https://accounts.spotify.com/api/token");
+                searchAlbum();
+
+                URL url = new URL("http://api.deezer.com/album/302127");
+                InputStream deezer = url.openConnection().getInputStream();
+                Scanner d = new Scanner(deezer).useDelimiter("\\A");
+                String result = d.hasNext() ? d.next() : "";
+                Log.d(TAG, result);
                 HttpURLConnection connection = (HttpURLConnection) url.openConnection();
                 connection.setDoOutput(true);
-                connection.setRequestProperty ("Authorization", "Basic MDIyOGY3NmZhNWQ1NGY0MmFiNzUxYjhmOTE0YzZiZTg6YTdiMDMxZDczNGFlNDIwNWE3NDNlMGMwZGQxOTZmMDg=");
-                connection.setRequestMethod("POST");
+                //connection.setRequestProperty ("Authorization", "Basic MDIyOGY3NmZhNWQ1NGY0MmFiNzUxYjhmOTE0YzZiZTg6YTdiMDMxZDczNGFlNDIwNWE3NDNlMGMwZGQxOTZmMDg=");
+                //connection.setRequestMethod("POST");
 
                 OutputStream out = new BufferedOutputStream(connection.getOutputStream());
-                out.write("-d grant_type=client_credentials ".getBytes());
+                //out.write("-d grant_type=client_credentials ".getBytes());
 
                 connection.connect();
                 Log.d(TAG, connection.getResponseMessage());
@@ -61,8 +70,8 @@ public class Spotify {
 
                 InputStream in = new BufferedInputStream(connection.getInputStream());
                 Scanner s = new Scanner(in).useDelimiter("\\A");
-                String result = s.hasNext() ? s.next() : "";
-                Log.d(TAG, result);
+                //String result = s.hasNext() ? s.next() : "";
+                //Log.d(TAG, result);
                 //connection.disconnect();
                 //InputStream input = new URL(urls[0]).openStream();
                 //XMLParser xmlparser = new XMLParser();
@@ -75,6 +84,8 @@ public class Spotify {
 //            }
             return token;
         }
+
+
 
 //        @Override
 //        protected void onPostExecute(ArrayList<AlbumEntry> list) {

@@ -65,13 +65,13 @@
             android:layout_width="344dp"
             android:layout_height="48dp"
             android:layout_marginBottom="8dp"
+            android:layout_marginLeft="8dp"
             android:layout_weight="0.16"
             android:orientation="horizontal"
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintLeft_toLeftOf="parent"
-            android:layout_marginLeft="8dp"
-            tools:layout_editor_absoluteY="503dp"
-            tools:layout_editor_absoluteX="7dp">
+            android:layout_marginRight="8dp"
+            app:layout_constraintRight_toRightOf="parent">
 
             <ImageButton
                 android:id="@+id/favoriteAlbum"
@@ -85,11 +85,10 @@
                 android:id="@+id/saveAlbum"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:checked="false"
                 android:layout_weight=".25"
                 android:background="@android:drawable/screen_background_light_transparent"
-                android:src="@drawable/ic_action_save"
-                 />
+                android:checked="false"
+                android:src="@drawable/ic_action_save" />
 
             <ImageButton
                 android:id="@+id/playSong"

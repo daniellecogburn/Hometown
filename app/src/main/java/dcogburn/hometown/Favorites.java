@@ -134,7 +134,7 @@ public class Favorites extends AppCompatActivity {
     private void showDialog(AlbumInfo albumInfo){
         final AlbumInfo innerAlbum = albumInfo;
         AlertDialog.Builder builder = new AlertDialog.Builder(this);
-        builder.setMessage(albumInfo.getAlbumName() + "\n\nRating: " + albumInfo.getRating())
+        builder.setMessage(albumInfo.getAlbumName() + "\n\nRating: " + albumInfo.getRating() + "\n\n" + albumInfo.getCity())
                 .setTitle(albumInfo.getArtistName());
         builder.setPositiveButton(R.string.ok, new DialogInterface.OnClickListener() {
             public void onClick(DialogInterface dialog, int id) {
@@ -192,10 +192,8 @@ public class Favorites extends AppCompatActivity {
 
             int width = metrics.widthPixels;
             String urlStr = favoriteAlbumList.get(position).getAlbumArt();
-            //urlStr = "http://www.billboard.com/files/styles/900_wide/public/media/Joy-Division-Unknown-Pleasures-album-covers-billboard-1000x1000.jpg";
             URL url = null;
-                // hardcoded for testing
-                AlbumURL albumUrl = new AlbumURL();
+            AlbumURL albumUrl = new AlbumURL();
             Bitmap bmp = null;
             try {
                 bmp = albumUrl.execute(urlStr).get();

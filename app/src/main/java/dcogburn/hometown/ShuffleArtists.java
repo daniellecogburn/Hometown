@@ -138,7 +138,6 @@ public class ShuffleArtists extends AppCompatActivity implements RateFavoriteDia
 
     }
 
-
     public void createButtons(){
         ImageButton button = (ImageButton) findViewById(R.id.generatealbum);
         favoriteAlbum = (ImageButton) findViewById(R.id.favoriteAlbum);

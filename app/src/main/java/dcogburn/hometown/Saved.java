@@ -57,6 +57,7 @@ public class Saved extends AppCompatActivity {
     private GridView albumGridView;
     public ArrayList<AlbumInfo> saveAlbumList;
     private String TAG = "Saved";
+    DatabaseReference mDatabase;
     private static Context context;
     String city = "austin";
     UserInformation userInfo;
@@ -64,14 +65,13 @@ public class Saved extends AppCompatActivity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_favorites
-        );
+        setContentView(R.layout.activity_favorites);
         Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
 
         //hardcoded
         saveAlbumList = new ArrayList<>();
-        DatabaseReference mDatabase;
+
         mDatabase = FirebaseDatabase.getInstance().getReference();
 
         ChildEventListener childEventListener = new ChildEventListener() {
@@ -125,7 +125,14 @@ public class Saved extends AppCompatActivity {
         });
     }
 
+    @Override
+    protected void onResume(){
+        super.onResume();
+        initializeGrid();
+    }
+
     private void showDialog(AlbumInfo albumInfo){
+        final AlbumInfo innerAlbum = albumInfo;
         AlertDialog.Builder builder = new AlertDialog.Builder(this);
         builder.setMessage(albumInfo.getAlbumName() + "\n" + albumInfo.getCity())
                 .setTitle(albumInfo.getArtistName());
@@ -134,9 +141,15 @@ public class Saved extends AppCompatActivity {
                 // User clicked OK button
             }
         });
-        builder.setNegativeButton(R.string.cancel, new DialogInterface.OnClickListener() {
+        builder.setNegativeButton(R.string.delete, new DialogInterface.OnClickListener() {
             public void onClick(DialogInterface dialog, int id) {
-                // User cancelled the dialog
+                FirebaseUser user = FirebaseAuth.getInstance().getCurrentUser();
+                String uid = user.getUid();
+                mDatabase.child("users").child(uid).child("favorites").child(innerAlbum.getAlbumName() + " - " + innerAlbum.getArtistName()).removeValue();
+                int ind = saveAlbumList.indexOf(innerAlbum);
+                Log.d(TAG, String.valueOf(ind));
+                saveAlbumList.remove(ind);
+                initializeGrid();
             }
         });
         AlertDialog dialog = builder.create();
@@ -152,9 +165,7 @@ public class Saved extends AppCompatActivity {
 
         public int getCount() {
             Log.d(TAG, "Length in ImageAdapter "+ saveAlbumList.size());
-            //return 8;
             return saveAlbumList.size();
-            //return saveAlbumList.size();
         }
 
         public Object getItem(int position) {
@@ -181,10 +192,8 @@ public class Saved extends AppCompatActivity {
             getWindowManager().getDefaultDisplay().getMetrics(metrics);
 
             int width = metrics.widthPixels;
+
             String urlStr = saveAlbumList.get(position).getAlbumArt();
-            //urlStr = "http://www.billboard.com/files/styles/900_wide/public/media/Joy-Division-Unknown-Pleasures-album-covers-billboard-1000x1000.jpg";
-            URL url = null;
-            // hardcoded for testing
             AlbumURL albumUrl = new AlbumURL();
             Bitmap bmp = null;
             try {
@@ -198,9 +207,6 @@ public class Saved extends AppCompatActivity {
             imageView.setImageBitmap(Bitmap.createScaledBitmap(bmp, width/3, width/3, false));
             return imageView;
         }
-
-        // references to our images
-
     }
 
     class AlbumURL extends AsyncTask<String, Void, Bitmap> {

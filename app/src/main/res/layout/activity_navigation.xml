@@ -22,7 +22,6 @@
 
     <include layout="@layout/content_navigation" />
 
-
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="match_parent"
@@ -35,7 +34,8 @@
             android:layout_height="wrap_content"
             android:layout_weight="1"
             android:onClick="clickedCities"
-            android:text="@string/title_activity_cities" />
+            android:text="@string/title_activity_cities"
+            android:textSize="30sp" />
 
         <Button
             android:id="@+id/button4"
@@ -43,7 +43,8 @@
             android:layout_height="wrap_content"
             android:layout_weight="1"
             android:onClick="clickedFavorites"
-            android:text="@string/title_activity_favorites" />
+            android:text="@string/title_activity_favorites"
+            android:textSize="30sp" />
 
         <Button
             android:id="@+id/button5"
@@ -51,7 +52,8 @@
             android:layout_height="wrap_content"
             android:layout_weight="1"
             android:onClick="clickedSaved"
-            android:text="@string/title_activity_saved" />
+            android:text="@string/title_activity_saved"
+            android:textSize="30sp" />
 
         <Button
             android:id="@+id/button6"
@@ -59,7 +61,8 @@
             android:layout_height="wrap_content"
             android:layout_weight="1"
             android:onClick="clickedSettings"
-            android:text="@string/title_activity_settings" />
+            android:text="@string/title_activity_settings"
+            android:textSize="30sp" />
     </LinearLayout>
 
 </android.support.design.widget.CoordinatorLayout>
