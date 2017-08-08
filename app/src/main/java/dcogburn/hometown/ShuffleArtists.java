@@ -250,6 +250,9 @@ public class ShuffleArtists extends AppCompatActivity implements RateFavoriteDia
             case "lubbock":
                 is = getResources().openRawResource(R.raw.lubbock);
                 break;
+            case "san antonio":
+                is = getResources().openRawResource(R.raw.san_antonio);
+                break;
         }
 
         // generate album
