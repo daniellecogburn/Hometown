@@ -68,7 +68,8 @@ public class AlbumGenerator {
                 || album.name.contains("[")
                 || album.name.contains("]")
                 || album.name.contains("#")
-                || album.name.contains("/"));
+                || album.name.contains("/")
+                || album.imageLink.contains(".gif"));
         return albumList.get(index);
     }
 

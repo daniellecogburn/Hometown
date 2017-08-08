@@ -91,6 +91,8 @@ public class ShuffleArtists extends AppCompatActivity implements RateFavoriteDia
         mAlbum = (TextView) findViewById(R.id.album);
         mImage = (ImageView) findViewById(R.id.art);
         defaultImage = getResources().getDrawable(R.drawable.albumcover);
+
+        // initial album
         try {
             generateAlbum();
             displayAlbum();
@@ -100,6 +102,7 @@ public class ShuffleArtists extends AppCompatActivity implements RateFavoriteDia
             e.printStackTrace();
         }
 
+        // initialize buttons
         createButtons();
     }
 
@@ -125,7 +128,7 @@ public class ShuffleArtists extends AppCompatActivity implements RateFavoriteDia
 
     }
 
-
+    // create menu bar buttons
     public void createButtons(){
 
         // new album button
@@ -146,13 +149,15 @@ public class ShuffleArtists extends AppCompatActivity implements RateFavoriteDia
                     mImage.setImageDrawable(defaultImage);
                     generateAlbum();
                     displayAlbum();
-                    generateAlbum.setImageResource(R.drawable.ic_action_next);
+
+
                 } catch (IOException e) {
                     e.printStackTrace();
                 } catch (InterruptedException e) {
                     e.printStackTrace();
                 }
 
+                generateAlbum.setImageResource(R.drawable.ic_action_next);
 
             }
         });
