@@ -37,7 +37,9 @@ public class Settings extends AppCompatActivity implements View.OnClickListener 
         if (view == signOut) {
             finish();
             fAuth.signOut();
-            startActivity(new Intent(this, SignIn.class));
+            Intent intent = new Intent(getApplicationContext(), SignIn.class);
+            intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
+            startActivity(intent);
         }
     }
 
