@@ -25,13 +25,8 @@ import java.util.concurrent.ExecutionException;
 
 public class AlbumGenerator {
 
-    // random number generator
-    private Random rand;
-
-    private ArrayList<AlbumEntry> xmlResponse;
-
     public AlbumGenerator() {
-        rand = new Random();
+
     }
 
     public AlbumInfo generateAlbum(String city, Scanner sFile) throws ExecutionException, InterruptedException {
@@ -42,11 +37,10 @@ public class AlbumGenerator {
 
         // generate random album and info
         AlbumEntry album = null;
-        ArrayList<AlbumEntry> list = null;
-        //do {
+        ArrayList<AlbumEntry> list;
 
         if(artistList != null) {
-            do{
+            do {
                 do {
                     artist = chooseRandomArtist(artistList);
                     list = getAlbumList(artist);
@@ -55,45 +49,48 @@ public class AlbumGenerator {
             }
             while (album.imageLink.equals(""));
         }
-        //} while (albumInfo exists in any list); // TODO: search user's lists for album info
 
         // return album
         return new AlbumInfo(album.name, artist, album.imageLink, city);
     }
 
+    // get random album from artist
     private AlbumEntry getRandomAlbum(ArrayList<AlbumEntry> albumList) {
         int index;
+        AlbumEntry album;
 
-        if (albumList == null) {
-            index = 0; // error
-            Log.d("ERROR", "Album list null");
-        } else {
+        // skip albums with firebase-unfriendly characters
+        do{
             index = new Random().nextInt(albumList.size());
-        }
-
+            album = albumList.get(index);
+        } while (album.name.contains(".")
+                || album.name.contains("$")
+                || album.name.contains("[")
+                || album.name.contains("]")
+                || album.name.contains("#")
+                || album.name.contains("/"));
         return albumList.get(index);
     }
 
     // get artist array from city text file
     private String[] getArtistList(Scanner sFile) {
-
         ArrayList<String> artistList = new ArrayList<>();
-
-        String token = "";
+        String token;
         while (sFile.hasNext()) {
             token = sFile.nextLine();
             artistList.add(token);
         }
         sFile.close();
-
         return artistList.toArray(new String[0]);
     }
 
+    // pick a random artist from the artist list
     private String chooseRandomArtist(String[] artistList) {
         int index = new Random().nextInt(artistList.length);
         return artistList[index];
     }
 
+    // last.fm api call
     private ArrayList<AlbumEntry> getAlbumList(String artist) throws ExecutionException, InterruptedException {
 
         // build URL
@@ -105,9 +102,8 @@ public class AlbumGenerator {
         String url = sb.toString();
         Log.d("Last.fm api call:", url);
 
+        // wait for AsyncTask to complete
         ArrayList<AlbumEntry> albumList = new Parse().execute(url).get();
-
-        // TODO: race condition ?
 
         // return list of Album objects
         return albumList;
@@ -118,23 +114,16 @@ public class AlbumGenerator {
         protected ArrayList<AlbumEntry> doInBackground(String... urls) {
             // search for url, returns xml of albums
             ArrayList<AlbumEntry> albumList = null;
-            //Log.d("DEBUG", "in doInBackground");
             try {
                 InputStream input = new URL(urls[0]).openStream();
                 XMLParser xmlparser = new XMLParser();
                 albumList = xmlparser.parse(input);
-                //Log.d("DEBUG", "out of XMLParser");
             } catch (IOException e) {
                 e.printStackTrace();
             } catch (XmlPullParserException e) {
                 e.printStackTrace();
             }
             return albumList;
-        }
-
-        @Override
-        protected void onPostExecute(ArrayList<AlbumEntry> list) {
-            xmlResponse = list;
         }
 
     }
