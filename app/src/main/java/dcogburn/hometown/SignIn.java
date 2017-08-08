@@ -87,6 +87,8 @@ public class SignIn extends AppCompatActivity implements View.OnClickListener {
                             //start prof activity
                             finish();
                             startActivity(new Intent(getApplicationContext(), NavigationActivity.class));
+                        } else {
+                            Toast.makeText(SignIn.this, task.getException().getMessage(), Toast.LENGTH_LONG).show();
                         }
                     }
                 });

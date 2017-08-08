@@ -105,8 +105,7 @@ public class RegisterUser extends AppCompatActivity implements View.OnClickListe
                             finish();
                             startActivity(new Intent(getApplicationContext(), NavigationActivity.class));
                         } else {
-                            Toast.makeText(RegisterUser.this, "Failed To Register", Toast.LENGTH_SHORT).show();
-                            Log.w(TAG, "createUserWithEmail:failure", task.getException());
+                            Toast.makeText(RegisterUser.this, "Failed To Register:" + task.getException().getMessage(), Toast.LENGTH_LONG).show();
                         }
                     }
                 });
