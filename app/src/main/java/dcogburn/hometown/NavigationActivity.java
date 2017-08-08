@@ -19,20 +19,24 @@ public class NavigationActivity extends AppCompatActivity {
     }
 
     public void clickedCities(View view){
+        finish();
         Intent intent = new Intent(this, ListCities.class);
         intent.setFlags(Intent.FLAG_ACTIVITY_REORDER_TO_FRONT);
         startActivity(intent);
     }
     public void clickedFavorites(View view){
+        finish();
         Intent intent = new Intent(this, Favorites.class);
         intent.setFlags(Intent.FLAG_ACTIVITY_REORDER_TO_FRONT);
         startActivity(intent);
     }
     public void clickedSaved(View view){
+        finish();
         Intent intent = new Intent(this, Saved.class);
         intent.setFlags(Intent.FLAG_ACTIVITY_REORDER_TO_FRONT);
         startActivity(intent);
     } public void clickedSettings(View view){
+        finish();
         Intent intent = new Intent(this, Settings.class);
         intent.setFlags(Intent.FLAG_ACTIVITY_REORDER_TO_FRONT);
         startActivity(intent);
