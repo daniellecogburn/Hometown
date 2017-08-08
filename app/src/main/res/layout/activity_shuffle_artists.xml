@@ -27,12 +27,17 @@
 
         <ImageView
             android:id="@+id/art"
-            android:layout_width="336dp"
-            android:layout_height="351dp"
+            android:layout_width="404dp"
+            android:layout_height="373dp"
             android:layout_weight=".80"
             app:layout_constraintTop_toTopOf="parent"
+            android:layout_marginTop="8dp"
+            android:layout_marginRight="7dp"
+            app:layout_constraintRight_toRightOf="parent"
+            android:layout_marginLeft="8dp"
             app:layout_constraintLeft_toLeftOf="parent"
-            app:layout_constraintRight_toRightOf="parent" />
+            android:layout_marginStart="8dp"
+            android:layout_marginEnd="7dp" />
 
         <TextView
             android:id="@+id/artist"
@@ -70,8 +75,7 @@
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintLeft_toLeftOf="parent"
             android:layout_marginLeft="8dp"
-            tools:layout_editor_absoluteY="503dp"
-            tools:layout_editor_absoluteX="7dp">
+            android:layout_marginStart="8dp">
 
             <ImageButton
                 android:id="@+id/favoriteAlbum"
