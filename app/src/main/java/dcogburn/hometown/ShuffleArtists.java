@@ -216,7 +216,7 @@ public class ShuffleArtists extends AppCompatActivity implements RateFavoriteDia
     }
 
     public void playSong(View view){
-        Spotify spotify = new Spotify();
+        Play spotify = new Play();
         spotify.makeURL(thisAlbum);
     }
 

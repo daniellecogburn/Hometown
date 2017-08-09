@@ -1,5 +1,6 @@
 package dcogburn.hometown;
 
+import android.media.MediaPlayer;
 import android.os.AsyncTask;
 import android.util.Log;
 
@@ -21,10 +22,10 @@ import java.util.Scanner;
  * Created by danielle on 8/3/17.
  */
 
-public class Spotify {
-    String TAG = "Spotify";
+public class Play {
+    String TAG = "Play";
 
-    public Spotify(){
+    public Play(){
 
     }
 
@@ -43,7 +44,11 @@ public class Spotify {
                 Log.d(TAG, search.toString());
                 InputStream s = search.openConnection().getInputStream();
                 DeezerXMLParser parser = new DeezerXMLParser();
-                parser.parse(s);
+                URL clip = parser.parse(s);
+                MediaPlayer mp = new MediaPlayer();
+                mp.setDataSource(clip.toString());
+                mp.prepare();
+                mp.start();
                 //Log.d(TAG, result);
             } catch (MalformedURLException e) {
                 e.printStackTrace();
