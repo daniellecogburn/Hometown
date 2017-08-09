@@ -1,16 +1,12 @@
 package dcogburn.hometown;
 
 import android.os.AsyncTask;
-import android.os.Environment;
 import android.util.Log;
 
 import org.xmlpull.v1.XmlPullParserException;
 
-import java.io.File;
-import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.io.InputStream;
-import java.lang.reflect.Array;
 import java.net.URL;
 import java.util.ArrayList;
 import java.util.Random;
@@ -39,16 +35,14 @@ public class AlbumGenerator {
         AlbumEntry album = null;
         ArrayList<AlbumEntry> list;
 
-        if(artistList != null) {
+        do {
             do {
-                do {
-                    artist = chooseRandomArtist(artistList);
-                    list = getAlbumList(artist);
-                } while(list == null);
-                album = getRandomAlbum(list);
-            }
-            while (album.imageLink.equals(""));
+                artist = chooseRandomArtist(artistList);
+                list = getAlbumList(artist);
+            } while(list == null);
+            album = getRandomAlbum(list);
         }
+        while (album.imageLink.equals(""));
 
         // return album
         return new AlbumInfo(album.name, artist, album.imageLink, city);
@@ -95,33 +89,26 @@ public class AlbumGenerator {
     private ArrayList<AlbumEntry> getAlbumList(String artist) throws ExecutionException, InterruptedException {
 
         // build URL
-        StringBuilder sb = new StringBuilder();
-        sb.append("http://ws.audioscrobbler.com/2.0/?method=artist.gettopalbums&artist=");
-        sb.append(artist);
-        sb.append("&api_key=");
-        sb.append("dd9ced546f7bedffd7383459b13326e3");
-        String url = sb.toString();
+        String url = "http://ws.audioscrobbler.com/2.0/?method=artist.gettopalbums&artist=" +
+                artist +
+                "&api_key=" +
+                "dd9ced546f7bedffd7383459b13326e3";
         Log.d("Last.fm api call:", url);
 
-        // wait for AsyncTask to complete
-        ArrayList<AlbumEntry> albumList = new Parse().execute(url).get();
-
-        // return list of Album objects
-        return albumList;
+        // wait for AsyncTask to complete and return list of Album objects
+        return new Parse().execute(url).get();
     }
 
-    class Parse extends AsyncTask<String, Void, ArrayList<AlbumEntry>> {
+    private class Parse extends AsyncTask<String, Void, ArrayList<AlbumEntry>> {
 
         protected ArrayList<AlbumEntry> doInBackground(String... urls) {
             // search for url, returns xml of albums
-            ArrayList<AlbumEntry> albumList = null;
+            ArrayList albumList = null;
             try {
                 InputStream input = new URL(urls[0]).openStream();
                 XMLParser xmlparser = new XMLParser();
                 albumList = xmlparser.parse(input);
-            } catch (IOException e) {
-                e.printStackTrace();
-            } catch (XmlPullParserException e) {
+            } catch (IOException | XmlPullParserException e) {
                 e.printStackTrace();
             }
             return albumList;
