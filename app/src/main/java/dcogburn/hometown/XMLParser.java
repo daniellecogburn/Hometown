@@ -31,47 +31,6 @@ public class XMLParser {
         }
     }
 
-    public String parseSpotifyToken(InputStream in) throws XmlPullParserException, IOException {
-        try {
-            XmlPullParser parser = Xml.newPullParser();
-            parser.setFeature(XmlPullParser.FEATURE_PROCESS_NAMESPACES, false);
-            parser.setInput(in, null);
-            parser.nextTag();
-            return readSpotifyToken(parser);
-        } finally {
-            in.close();
-        }
-    }
-
-    private String readSpotifyToken(XmlPullParser parser) throws XmlPullParserException, IOException {
-        ArrayList albums = new ArrayList();
-
-        // into last.fm tag
-        parser.require(XmlPullParser.START_TAG, ns, "access-token");
-        if(parser.getAttributeValue(0).contains("failed")) {
-            return null;
-        }
-        parser.next();
-
-        // into topalbums
-        parser.require(XmlPullParser.START_TAG, ns, "topalbums");
-        while (parser.next() != XmlPullParser.END_TAG) {
-            if (parser.getEventType() != XmlPullParser.START_TAG) {
-                continue;
-            }
-            String name = parser.getName();
-            // Starts by looking for the album tag
-            if (name.equals("access-token")) {
-                Log.d(TAG, parser.getText());
-                return parser.getText();
-            } else {
-                skip(parser);
-            }
-        }
-        return "";
-    }
-
-
     private ArrayList readFeed(XmlPullParser parser) throws XmlPullParserException, IOException {
         ArrayList albums = new ArrayList();
 

@@ -37,6 +37,7 @@ public class RateFavoriteDialog extends DialogFragment {
                         float rating = ratingBar.getRating();
                         Log.d(TAG, String.valueOf(rating));
                         mListener.onDialogPositiveClick(rating);
+                        //favoriteAlbum.setImageResource(R.drawable.ic_action_favorite_pressed);
                     }
                 })
                 .setNegativeButton(R.string.cancel, new DialogInterface.OnClickListener() {
@@ -50,8 +51,8 @@ public class RateFavoriteDialog extends DialogFragment {
 
     /* Each method passes the DialogFragment in case the host needs to query it. */
     public interface NoticeDialogListener {
-        public void onDialogPositiveClick(float rating);
-        public void onDialogNegativeClick(DialogFragment dialog);
+        void onDialogPositiveClick(float rating);
+        void onDialogNegativeClick(DialogFragment dialog);
     }
 
     // Use this instance of the interface to deliver action events

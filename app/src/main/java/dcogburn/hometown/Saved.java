@@ -134,7 +134,7 @@ public class Saved extends AppCompatActivity {
     private void showDialog(AlbumInfo albumInfo){
         final AlbumInfo innerAlbum = albumInfo;
         AlertDialog.Builder builder = new AlertDialog.Builder(this);
-        builder.setMessage(albumInfo.getAlbumName() + "\n" + albumInfo.getCity())
+        builder.setMessage(albumInfo.getAlbumName() + "\n\n" + albumInfo.getCity())
                 .setTitle(albumInfo.getArtistName());
         builder.setPositiveButton(R.string.ok, new DialogInterface.OnClickListener() {
             public void onClick(DialogInterface dialog, int id) {

@@ -30,67 +30,37 @@ public class Spotify {
 
     public void makeURL(AlbumInfo album){
         URL url;
-        new Parse().execute("");
+        new Parse().execute(album);
 
     }
 
     class Parse extends AsyncTask<AlbumInfo, Void, String> {
-        private void searchAlbum(){
-
+        private void searchAlbum(AlbumInfo album){
+            Log.d(TAG, "in searchalbums");
+            Log.d(TAG, album.getArtistName());
+            try {
+                URL search = new URL("http://api.deezer.com/search?q=artist:\""+album.getArtistName().toLowerCase() + "\" album:\"" + album.getAlbumName().toLowerCase()+ "\" &output=xml");
+                Log.d(TAG, search.toString());
+                InputStream s = search.openConnection().getInputStream();
+                DeezerXMLParser parser = new DeezerXMLParser();
+                parser.parse(s);
+                //Log.d(TAG, result);
+            } catch (MalformedURLException e) {
+                e.printStackTrace();
+            } catch (IOException e) {
+                e.printStackTrace();
+            } catch (XmlPullParserException e) {
+                e.printStackTrace();
+            }
         }
 
         protected String doInBackground(AlbumInfo... albumInfos) {
             // search for url, returns xml of albums
             String token = "";
-            //Log.d("DEBUG", "in doInBackground");
-            try {
-                searchAlbum();
-
-                URL url = new URL("http://api.deezer.com/album/302127");
-                InputStream deezer = url.openConnection().getInputStream();
-                Scanner d = new Scanner(deezer).useDelimiter("\\A");
-                String result = d.hasNext() ? d.next() : "";
-                Log.d(TAG, result);
-                HttpURLConnection connection = (HttpURLConnection) url.openConnection();
-                connection.setDoOutput(true);
-                //connection.setRequestProperty ("Authorization", "Basic MDIyOGY3NmZhNWQ1NGY0MmFiNzUxYjhmOTE0YzZiZTg6YTdiMDMxZDczNGFlNDIwNWE3NDNlMGMwZGQxOTZmMDg=");
-                //connection.setRequestMethod("POST");
-
-                OutputStream out = new BufferedOutputStream(connection.getOutputStream());
-                //out.write("-d grant_type=client_credentials ".getBytes());
-
-                connection.connect();
-                Log.d(TAG, connection.getResponseMessage());
-
-                InputStream err = new BufferedInputStream(connection.getErrorStream());
-                Scanner e = new Scanner(err).useDelimiter("\\A");
-                String error = e.hasNext() ? e.next() : "";
-                Log.d(TAG, error);
-
-
-                InputStream in = new BufferedInputStream(connection.getInputStream());
-                Scanner s = new Scanner(in).useDelimiter("\\A");
-                //String result = s.hasNext() ? s.next() : "";
-                //Log.d(TAG, result);
-                //connection.disconnect();
-                //InputStream input = new URL(urls[0]).openStream();
-                //XMLParser xmlparser = new XMLParser();
-                //token = xmlparser.parseSpotifyToken(input);
-                //Log.d("DEBUG", "out of XMLParser");
-            } catch (IOException e) {
-                e.printStackTrace();
-            } //catch (XmlPullParserException e) {
-//                e.printStackTrace();
-//            }
+            searchAlbum(albumInfos[0]);
             return token;
         }
 
-
-
-//        @Override
-//        protected void onPostExecute(ArrayList<AlbumEntry> list) {
-//            xmlResponse = list;
-//        }
-
     }
+
 }
