@@ -83,15 +83,16 @@
             android:id="@+id/button6"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_weight="1"
-            android:onClick="clickedSettings"
-            android:backgroundTint="@android:color/holo_blue_dark"
-            android:textColor="@android:color/white"
             android:layout_gravity="center"
+            android:layout_margin="10dp"
+            android:layout_weight="1"
+            android:backgroundTint="@android:color/holo_blue_dark"
+            android:onClick="clickedSettings"
+            android:paddingLeft="32dp"
+            android:paddingRight="32dp"
             android:text="Log Out"
             android:textAppearance="?android:attr/textAppearanceLarge"
-            android:layout_margin="10dp"
-            />
+            android:textColor="@android:color/white" />
     </LinearLayout>
 
 </android.support.design.widget.CoordinatorLayout>
