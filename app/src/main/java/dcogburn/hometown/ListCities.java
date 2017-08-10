@@ -28,7 +28,7 @@ import java.util.HashMap;
 public class ListCities extends AppCompatActivity {
     String TAG = "ListCities ";
     final int MY_PERMISSIONS = 0;
-    ArrayList<String> cityNames = new ArrayList<String>(Arrays.asList("Austin", "Dallas", "Denton", "El Paso", "Houston", "Lubbock", "San Antonio"));
+    ArrayList<String> cityNames = new ArrayList<>(Arrays.asList("Austin", "Dallas", "Denton", "El Paso", "Houston", "Lubbock", "San Antonio", "New York", "Los Angeles", "Seattle", "Nashville"));
     private static Context context;
     ListView listView;
     String closestCity;
@@ -170,6 +170,10 @@ public class ListCities extends AppCompatActivity {
         latMap.put("Houston", 29.7604);
         latMap.put("Lubbock", 33.5779);
         latMap.put("San Antonio", 29.4241);
+        latMap.put("New York", 40.7306);
+        latMap.put("Los Angeles", 34.0522);
+        latMap.put("Seattle", 47.6080);
+        latMap.put("Nashville", 36.1744);
 
         HashMap<String, Double> longMap = new HashMap();
         longMap.put("Austin", 97.7431);
@@ -179,6 +183,10 @@ public class ListCities extends AppCompatActivity {
         longMap.put("Houston", 95.3698);
         longMap.put("Lubbock", 101.8552);
         longMap.put("San Antonio", 98.4936);
+        longMap.put("New York", 73.9352);
+        longMap.put("Los Angeles", 118.2436);
+        longMap.put("Seattle", 122.3351);
+        longMap.put("Nashville", 86.7679);
 
         double shortestDist = 1000;
         double dist = 0;
@@ -193,7 +201,7 @@ public class ListCities extends AppCompatActivity {
                 closestCity = cityNames.get(i);
             }
         }
-        if (dist > 8){
+        if (shortestDist > 8){
             closestCity = "None!";
         }
         Log.d(TAG, closestCity);
