@@ -17,6 +17,9 @@ import java.net.URL;
 import java.nio.charset.StandardCharsets;
 import java.util.ArrayList;
 import java.util.Scanner;
+import java.util.Timer;
+
+import javax.xml.transform.Result;
 
 /**
  * Created by danielle on 8/3/17.
@@ -29,27 +32,39 @@ public class Play {
 
     }
 
-    public void makeURL(AlbumInfo album){
+    public String makeURL(AlbumInfo album){
         URL url;
-        new Parse().execute(album);
+        Parse parse = new Parse();
+        parse.execute(album);
+        //parse.onPostExecute();
+        return parse.c;
 
     }
 
     class Parse extends AsyncTask<AlbumInfo, Void, String> {
-        private void searchAlbum(AlbumInfo album){
+        public String c;
+        private String getPreviewUrl(AlbumInfo album) {
             Log.d(TAG, "in searchalbums");
             Log.d(TAG, album.getArtistName());
             try {
-                URL search = new URL("http://api.deezer.com/search?q=artist:\""+album.getArtistName().toLowerCase() + "\" album:\"" + album.getAlbumName().toLowerCase()+ "\" &output=xml");
+                URL search = new URL("http://api.deezer.com/search?q=artist:\"" + album.getArtistName().toLowerCase() + "\" album:\"" + album.getAlbumName().toLowerCase() + "\" &output=xml");
                 Log.d(TAG, search.toString());
                 InputStream s = search.openConnection().getInputStream();
                 DeezerXMLParser parser = new DeezerXMLParser();
-                URL clip = parser.parse(s);
-                MediaPlayer mp = new MediaPlayer();
-                mp.setDataSource(clip.toString());
-                mp.prepare();
-                mp.start();
-                //Log.d(TAG, result);
+                URL url = parser.parse(s);
+                if (url != null) {
+                    String clip = url.toString();
+                    return clip;
+                } else {
+                    search = new URL("http://api.deezer.com/search?q=album:\"" + album.getArtistName().toLowerCase() + "&output=xml");
+                    s = search.openConnection().getInputStream();
+                    parser = new DeezerXMLParser();
+                    url = parser.parse(s);
+                    if (url != null) {
+                        return url.toString();
+                    }
+                }
+                return null;
             } catch (MalformedURLException e) {
                 e.printStackTrace();
             } catch (IOException e) {
@@ -57,15 +72,17 @@ public class Play {
             } catch (XmlPullParserException e) {
                 e.printStackTrace();
             }
+            return null;
         }
 
         protected String doInBackground(AlbumInfo... albumInfos) {
             // search for url, returns xml of albums
-            String token = "";
-            searchAlbum(albumInfos[0]);
-            return token;
+            String clip = getPreviewUrl(albumInfos[0]);
+            return clip;
         }
 
+        protected void onPostExecute(String result){
+        }
     }
 
 }

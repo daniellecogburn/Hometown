@@ -62,7 +62,7 @@ public class DeezerXMLParser {
                     break;
             }
             eventType = parser.next();
-            //Log.d(TAG, text);
+            Log.d(TAG, text);
             Log.d(TAG, "clip: "+ clip);
 
         }

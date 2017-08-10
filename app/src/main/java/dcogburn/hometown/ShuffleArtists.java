@@ -14,6 +14,7 @@ import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.graphics.Canvas;
 import android.graphics.drawable.Drawable;
+import android.media.MediaPlayer;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
@@ -33,6 +34,8 @@ import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 
+import org.xmlpull.v1.XmlPullParserException;
+
 import java.io.IOException;
 import java.io.InputStream;
 import java.net.MalformedURLException;
@@ -44,6 +47,7 @@ import java.util.concurrent.ExecutionException;
 public class ShuffleArtists extends AppCompatActivity implements RateFavoriteDialog.NoticeDialogListener  {
 
     static Context context;
+    String TAG = "ShuffleArtists";
 
     // Various display
     private TextView mArtist;
@@ -68,6 +72,11 @@ public class ShuffleArtists extends AppCompatActivity implements RateFavoriteDia
     // album info
     AlbumInfo thisAlbum;
     private ArrayList<AlbumInfo> albumQueue = new ArrayList<>();
+
+    // media player
+    MediaPlayer mp;
+    int mpPosition;
+    AlbumInfo currentPlayingAlbum;
 
 
     @Override
@@ -102,8 +111,22 @@ public class ShuffleArtists extends AppCompatActivity implements RateFavoriteDia
             e.printStackTrace();
         }
 
+        // media player globals
+        mp = new MediaPlayer();
+        mpPosition = 0;
+        playSong(null);
+
         // initialize buttons
         createButtons();
+    }
+
+    @Override
+    protected void onResume(){
+        super.onResume();
+        Intent intent = getIntent();
+        city = intent.getStringExtra("city");
+        Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
+        toolbar.setTitle(city);
     }
 
     @Override
@@ -148,7 +171,8 @@ public class ShuffleArtists extends AppCompatActivity implements RateFavoriteDia
                     mImage.setImageDrawable(defaultImage);
                     generateAlbum();
                     displayAlbum();
-
+                    mpPosition = 0;
+                    playSong(null);
 
                 } catch (IOException e) {
                     e.printStackTrace();
@@ -157,7 +181,6 @@ public class ShuffleArtists extends AppCompatActivity implements RateFavoriteDia
                 }
 
                 generateAlbum.setImageResource(R.drawable.ic_action_next);
-
             }
         });
 
@@ -216,17 +239,30 @@ public class ShuffleArtists extends AppCompatActivity implements RateFavoriteDia
     }
 
     public void playSong(View view){
-        Play spotify = new Play();
-        spotify.makeURL(thisAlbum);
-    }
-
-    @Override
-    protected void onResume(){
-        super.onResume();
-        Intent intent = getIntent();
-        city = intent.getStringExtra("city");
-        Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
-        toolbar.setTitle(city);
+        if (currentPlayingAlbum == null){
+            Parse parse = new Parse();
+            parse.execute(thisAlbum);
+            currentPlayingAlbum = thisAlbum;
+        }
+        else if (!currentPlayingAlbum.getArtistName().equals(thisAlbum.getArtistName())){
+            mp.pause();
+            Parse parse = new Parse();
+            parse.execute(thisAlbum);
+            currentPlayingAlbum = thisAlbum;
+        }
+        else {
+            if (mp.isPlaying()) {
+                mpPosition = mp.getCurrentPosition();
+                mp.pause();
+            } else if (mpPosition == 0) {
+                Parse parse = new Parse();
+                parse.execute(thisAlbum);
+                currentPlayingAlbum = thisAlbum;
+            } else {
+                mp.seekTo(mpPosition);
+                mp.start();
+            }
+        }
     }
 
     // display album on page
@@ -306,6 +342,66 @@ public class ShuffleArtists extends AppCompatActivity implements RateFavoriteDia
         @Override
         protected void onPostExecute(Bitmap bmp) {
             mImage.setImageBitmap(bmp);
+        }
+    }
+
+    class Parse extends AsyncTask<AlbumInfo, Void, String> {
+
+        public String c;
+        private String getPreviewUrl(AlbumInfo album){
+            Log.d(TAG, "in searchalbums");
+            Log.d(TAG, album.getArtistName());
+            try {
+                URL search = new URL("http://api.deezer.com/search?q=artist:\""+album.getArtistName().toLowerCase() + "\" album:\"" + album.getAlbumName().toLowerCase()+ "\" &output=xml");
+                Log.d(TAG, search.toString());
+                InputStream s = search.openConnection().getInputStream();
+                DeezerXMLParser parser = new DeezerXMLParser();
+                URL url = parser.parse(s);
+                if (url != null) {
+                    String clip = url.toString();
+                    return clip;
+                } else {
+                    search = new URL("http://api.deezer.com/search?q=album:\"" + album.getArtistName().toLowerCase() + "&output=xml");
+                    s = search.openConnection().getInputStream();
+                    parser = new DeezerXMLParser();
+                    url = parser.parse(s);
+                    if (url != null) {
+                        return url.toString();
+                    }
+                }
+            } catch (MalformedURLException e) {
+                e.printStackTrace();
+            } catch (IOException e) {
+                e.printStackTrace();
+            } catch (XmlPullParserException e) {
+                e.printStackTrace();
+            }
+            return null;
+        }
+
+        protected String doInBackground(AlbumInfo... albumInfos) {
+            // search for url, returns xml of albums
+            String clip = getPreviewUrl(albumInfos[0]);
+            return clip;
+        }
+
+        protected void onPostExecute(String result){
+            if (result == null){
+                Toast.makeText(ShuffleArtists.context, "Album cannot be found. Please try next album.", Toast.LENGTH_SHORT).show();
+                return;
+            }
+            try {
+                mp.reset();
+                mp.setDataSource(result.toString());
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
+            try {
+                mp.prepare();
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
+            mp.start();
         }
     }
 
