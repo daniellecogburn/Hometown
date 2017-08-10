@@ -168,7 +168,7 @@ public class ShuffleArtists extends AppCompatActivity implements RateFavoriteDia
                 favoriteAlbum.setImageResource(R.drawable.ic_action_favorite);
 
                 try {
-                    mImage.setImageDrawable(defaultImage);
+                    mImage.setImageResource(android.R.color.transparent);
                     generateAlbum();
                     displayAlbum();
                     mpPosition = 0;
