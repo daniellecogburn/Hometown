@@ -128,6 +128,7 @@ public class Saved extends AppCompatActivity {
     @Override
     protected void onResume(){
         super.onResume();
+
         initializeGrid();
     }
 
@@ -145,7 +146,7 @@ public class Saved extends AppCompatActivity {
             public void onClick(DialogInterface dialog, int id) {
                 FirebaseUser user = FirebaseAuth.getInstance().getCurrentUser();
                 String uid = user.getUid();
-                mDatabase.child("users").child(uid).child("favorites").child(innerAlbum.getAlbumName() + " - " + innerAlbum.getArtistName()).removeValue();
+                mDatabase.child("users").child(uid).child("saved").child(innerAlbum.getAlbumName() + " - " + innerAlbum.getArtistName()).removeValue();
                 int ind = saveAlbumList.indexOf(innerAlbum);
                 Log.d(TAG, String.valueOf(ind));
                 saveAlbumList.remove(ind);

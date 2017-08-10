@@ -244,7 +244,7 @@ public class ShuffleArtists extends AppCompatActivity implements RateFavoriteDia
             parse.execute(thisAlbum);
             currentPlayingAlbum = thisAlbum;
         }
-        else if (!currentPlayingAlbum.getArtistName().equals(thisAlbum.getArtistName())){
+        else if (!currentPlayingAlbum.getAlbumName().equals(thisAlbum.getAlbumName())){
             mp.pause();
             Parse parse = new Parse();
             parse.execute(thisAlbum);
@@ -353,19 +353,21 @@ public class ShuffleArtists extends AppCompatActivity implements RateFavoriteDia
             Log.d(TAG, album.getArtistName());
             try {
                 URL search = new URL("http://api.deezer.com/search?q=artist:\""+album.getArtistName().toLowerCase() + "\" album:\"" + album.getAlbumName().toLowerCase()+ "\" &output=xml");
-                Log.d(TAG, search.toString());
                 InputStream s = search.openConnection().getInputStream();
                 DeezerXMLParser parser = new DeezerXMLParser();
                 URL url = parser.parse(s);
                 if (url != null) {
+                    Log.d(TAG, "found track by album " + thisAlbum.getArtistName());
                     String clip = url.toString();
                     return clip;
                 } else {
-                    search = new URL("http://api.deezer.com/search?q=album:\"" + album.getArtistName().toLowerCase() + "&output=xml");
+                    Log.d(TAG, "artist" + album.getArtistName());
+                    search = new URL("http://api.deezer.com/search?q=artist:\"" + album.getArtistName().toLowerCase() + "&output=xml");
                     s = search.openConnection().getInputStream();
                     parser = new DeezerXMLParser();
                     url = parser.parse(s);
                     if (url != null) {
+                        Log.d(TAG, "found track by artist: "+ thisAlbum.getArtistName());
                         return url.toString();
                     }
                 }
