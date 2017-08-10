@@ -5,11 +5,6 @@
       <module fileurl="file://$PROJECT_DIR$/Hometown.iml" filepath="$PROJECT_DIR$/Hometown.iml" />
       <module fileurl="file://$PROJECT_DIR$/app/app.iml" filepath="$PROJECT_DIR$/app/app.iml" />
       <module fileurl="file://$PROJECT_DIR$/auth-lib/auth-lib.iml" filepath="$PROJECT_DIR$/auth-lib/auth-lib.iml" />
-<<<<<<< HEAD
-=======
-      <module fileurl="file://$PROJECT_DIR$/auth-lib/auth-lib.iml" filepath="$PROJECT_DIR$/auth-lib/auth-lib.iml" />
-      <module fileurl="file://$PROJECT_DIR$/auth-lib/auth-lib.iml" filepath="$PROJECT_DIR$/auth-lib/auth-lib.iml" />
->>>>>>> d4980bde024068b46f35d5a1640304821e455bc4
     </modules>
   </component>
 </project>

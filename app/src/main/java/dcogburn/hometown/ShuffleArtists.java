@@ -1,18 +1,12 @@
 package dcogburn.hometown;
 
-import android.Manifest;
-import android.app.Activity;
-import android.app.AlertDialog;
-import android.app.Dialog;
 import android.app.DialogFragment;
 import android.app.Fragment;
 import android.app.FragmentTransaction;
 import android.content.Context;
-import android.content.DialogInterface;
 import android.content.Intent;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
-import android.graphics.Canvas;
 import android.graphics.drawable.Drawable;
 import android.media.MediaPlayer;
 import android.os.AsyncTask;
@@ -20,14 +14,12 @@ import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
 import android.util.Log;
-import android.view.LayoutInflater;
 import android.view.View;
 import android.widget.ImageButton;
 import android.widget.ImageView;
 import android.widget.RatingBar;
 import android.widget.TextView;
 import android.widget.Toast;
-import android.widget.ToggleButton;
 
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
@@ -54,7 +46,6 @@ public class ShuffleArtists extends AppCompatActivity implements RateFavoriteDia
     private TextView mAlbum;
     private String city;
     private ImageView mImage;
-    private Drawable defaultImage;
 
     private static RatingBar ratingBar;
 
@@ -78,7 +69,6 @@ public class ShuffleArtists extends AppCompatActivity implements RateFavoriteDia
     int mpPosition;
     AlbumInfo currentPlayingAlbum;
 
-
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         Intent intent = getIntent();
@@ -99,15 +89,12 @@ public class ShuffleArtists extends AppCompatActivity implements RateFavoriteDia
         mArtist = (TextView) findViewById(R.id.artist);
         mAlbum = (TextView) findViewById(R.id.album);
         mImage = (ImageView) findViewById(R.id.art);
-        defaultImage = getResources().getDrawable(R.drawable.albumcover);
 
         // initial album
         try {
             generateAlbum();
             displayAlbum();
-        } catch (IOException e) {
-            e.printStackTrace();
-        } catch (InterruptedException e) {
+        } catch (IOException | InterruptedException e) {
             e.printStackTrace();
         }
 
@@ -118,6 +105,12 @@ public class ShuffleArtists extends AppCompatActivity implements RateFavoriteDia
 
         // initialize buttons
         createButtons();
+
+        mp.setOnCompletionListener(new MediaPlayer.OnCompletionListener() {
+            public void onCompletion(MediaPlayer mp) {
+                playButton.setImageResource(R.drawable.ic_action_play);
+            }
+        });
     }
 
     @Override
@@ -133,13 +126,10 @@ public class ShuffleArtists extends AppCompatActivity implements RateFavoriteDia
     public void onDialogPositiveClick(float rating) {
         // User touched the dialog's positive button
         thisAlbum.setRating((int) rating);
-        FirebaseUser user = FirebaseAuth.getInstance().getCurrentUser();
+        FirebaseUser user = firebaseAuth.getCurrentUser();
+        assert user != null;
         String uid = user.getUid();
-        if (user != null) {
-            Log.d("SHUFFLE", uid);
-        } else {
-            // No user is signed in
-        }
+        Log.d("SHUFFLE", uid);
         Toast.makeText(ShuffleArtists.context, "Album saved to favorites", Toast.LENGTH_SHORT).show();
         databaseReference.child("users").child(uid).child("favorites").child(thisAlbum.getAlbumName() + " - " + thisAlbum.getArtistName()).setValue(thisAlbum);
         favoriteAlbum.setImageResource(R.drawable.ic_action_favorite_pressed);
@@ -159,28 +149,21 @@ public class ShuffleArtists extends AppCompatActivity implements RateFavoriteDia
             @Override
             public void onClick(View view) {
 
-                // TODO this don't work
-                generateAlbum.setImageResource(R.drawable.ic_action_next_pressed);
                 saveAlbumPressed = false;
 
                 // reset buttons
                 saveAlbum.setImageResource(R.drawable.ic_action_save);
                 favoriteAlbum.setImageResource(R.drawable.ic_action_favorite);
-
                 try {
                     mImage.setImageResource(android.R.color.transparent);
                     generateAlbum();
                     displayAlbum();
                     mpPosition = 0;
                     playSong(null);
-
-                } catch (IOException e) {
-                    e.printStackTrace();
-                } catch (InterruptedException e) {
+                } catch (IOException | InterruptedException e) {
                     e.printStackTrace();
                 }
-
-                generateAlbum.setImageResource(R.drawable.ic_action_next);
+                playButton.setImageResource(R.drawable.ic_action_pause);
             }
         });
 
@@ -212,20 +195,15 @@ public class ShuffleArtists extends AppCompatActivity implements RateFavoriteDia
                 AlbumInfo album = thisAlbum;
 
                 FirebaseUser user = FirebaseAuth.getInstance().getCurrentUser();
+                assert user != null;
                 String uid = user.getUid();
-                if (user != null) {
-                    Log.d("SHUFFLE", uid);
-                } else {
-                    // No user is signed in
-                }
+                Log.d("SHUFFLE", uid);
 
                 if(!saveAlbumPressed) {
                     saveAlbum.setImageResource(R.drawable.ic_action_save_pressed);
-                    // Toast.makeText(ShuffleArtists.context, "Album saved to Saved for Later", Toast.LENGTH_SHORT).show();
                     databaseReference.child("users").child(uid).child("save").child(album.getAlbumName() + " - " + album.getArtistName()).setValue(album);
                 } else {
                     saveAlbum.setImageResource(R.drawable.ic_action_save);
-                    // Toast.makeText(ShuffleArtists.context, "Album removed from Saved for Later", Toast.LENGTH_SHORT).show();
                     databaseReference.child("users").child(uid).child("save").child(album.getAlbumName() + " - " + album.getArtistName()).removeValue();
                 }
 
@@ -236,6 +214,17 @@ public class ShuffleArtists extends AppCompatActivity implements RateFavoriteDia
 
         // play song button
         playButton = (ImageButton) findViewById(R.id.playSong);
+        playButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                if(!mp.isPlaying()) {
+                    playButton.setImageResource(R.drawable.ic_action_pause);
+                } else {
+                    playButton.setImageResource(R.drawable.ic_action_play);
+                }
+                playSong(view);
+            }
+        });
     }
 
     public void playSong(View view){
@@ -371,11 +360,7 @@ public class ShuffleArtists extends AppCompatActivity implements RateFavoriteDia
                         return url.toString();
                     }
                 }
-            } catch (MalformedURLException e) {
-                e.printStackTrace();
-            } catch (IOException e) {
-                e.printStackTrace();
-            } catch (XmlPullParserException e) {
+            } catch (IOException | XmlPullParserException e) {
                 e.printStackTrace();
             }
             return null;
@@ -383,22 +368,18 @@ public class ShuffleArtists extends AppCompatActivity implements RateFavoriteDia
 
         protected String doInBackground(AlbumInfo... albumInfos) {
             // search for url, returns xml of albums
-            String clip = getPreviewUrl(albumInfos[0]);
-            return clip;
+            return getPreviewUrl(albumInfos[0]);
         }
 
         protected void onPostExecute(String result){
             if (result == null){
                 Toast.makeText(ShuffleArtists.context, "Album cannot be found. Please try next album.", Toast.LENGTH_SHORT).show();
+                playButton.setImageResource(R.drawable.ic_action_play);
                 return;
             }
             try {
                 mp.reset();
-                mp.setDataSource(result.toString());
-            } catch (IOException e) {
-                e.printStackTrace();
-            }
-            try {
+                mp.setDataSource(result);
                 mp.prepare();
             } catch (IOException e) {
                 e.printStackTrace();

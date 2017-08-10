@@ -1,19 +1,14 @@
 package dcogburn.hometown;
 
 import android.Manifest;
-import android.app.Activity;
-import android.app.ListActivity;
 import android.content.Context;
 import android.content.Intent;
 import android.content.pm.PackageManager;
-import android.database.Cursor;
 import android.location.Location;
 import android.location.LocationListener;
 import android.location.LocationManager;
 import android.os.Bundle;
-import android.support.design.widget.NavigationView;
 import android.support.v4.app.ActivityCompat;
-import android.support.v4.app.LoaderManager;
 import android.support.v4.content.ContextCompat;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
@@ -22,23 +17,17 @@ import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.AdapterView;
-import android.widget.ArrayAdapter;
-import android.widget.ListAdapter;
-import android.widget.ListView;
 import android.widget.AdapterView.OnItemClickListener;
-import android.widget.TextView;
-import android.widget.Toast;
+import android.widget.ArrayAdapter;
+import android.widget.ListView;
 
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashMap;
 
-import static android.R.id.list;
-
 public class ListCities extends AppCompatActivity {
     String TAG = "ListCities ";
     final int MY_PERMISSIONS = 0;
-    private ListView mListView;
     ArrayList<String> cityNames = new ArrayList<String>(Arrays.asList("Austin", "Dallas", "Denton", "El Paso", "Houston", "Lubbock", "San Antonio"));
     private static Context context;
     ListView listView;
@@ -54,14 +43,8 @@ public class ListCities extends AppCompatActivity {
         setSupportActionBar(toolbar);
         ListCities.context = getApplicationContext();
 
-        if (ContextCompat.checkSelfPermission(context,
-                Manifest.permission.ACCESS_COARSE_LOCATION)
-                != PackageManager.PERMISSION_GRANTED) {
-            hasPermissions = false;
-        }
-        else{
-            hasPermissions = true;
-        }
+        hasPermissions = ContextCompat.checkSelfPermission(context,
+                Manifest.permission.ACCESS_COARSE_LOCATION) == PackageManager.PERMISSION_GRANTED;
 
         ActivityCompat.requestPermissions(this, new String[]{Manifest.permission.ACCESS_COARSE_LOCATION}, MY_PERMISSIONS);
 
@@ -82,15 +65,13 @@ public class ListCities extends AppCompatActivity {
         listView.setOnItemClickListener(new OnItemClickListener() {
             @Override
             public void onItemClick(AdapterView<?> adapterView, View view, int i, long l) {
-                String value = (String) listView.getItemAtPosition(i);
                 Intent intent = new Intent(getApplicationContext(), ShuffleArtists.class);
                 intent.setFlags(Intent.FLAG_ACTIVITY_REORDER_TO_FRONT);
                 intent.putExtra("city", cityNames.get(i));
                 if (i == 0){
                     if (closestCity != null) {
                         intent.putExtra("city", closestCity);
-                    }
-                    else{
+                    } else {
                         return;
                     }
                 }
@@ -118,7 +99,6 @@ public class ListCities extends AppCompatActivity {
                     hasPermissions = false;
                     closestCity = null;
                 }
-                return;
             }
 
             // other 'case' lines to check for other
@@ -199,7 +179,6 @@ public class ListCities extends AppCompatActivity {
         longMap.put("Houston", 95.3698);
         longMap.put("Lubbock", 101.8552);
         longMap.put("San Antonio", 98.4936);
-
 
         double shortestDist = 1000;
         double dist = 0;
