@@ -86,13 +86,11 @@
             android:layout_gravity="center"
             android:layout_margin="10dp"
             android:layout_weight="1"
-            android:backgroundTint="@android:color/holo_blue_dark"
             android:onClick="clickedSettings"
             android:paddingLeft="32dp"
             android:paddingRight="32dp"
             android:text="Log Out"
-            android:textAppearance="?android:attr/textAppearanceLarge"
-            android:textColor="@android:color/white" />
+            android:textAppearance="?android:attr/textAppearanceLarge" />
     </LinearLayout>
 
 </android.support.design.widget.CoordinatorLayout>
