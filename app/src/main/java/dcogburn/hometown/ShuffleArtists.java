@@ -33,6 +33,7 @@ import java.io.InputStream;
 import java.net.MalformedURLException;
 import java.net.URL;
 import java.util.ArrayList;
+import java.util.Objects;
 import java.util.Scanner;
 import java.util.concurrent.ExecutionException;
 
@@ -90,27 +91,34 @@ public class ShuffleArtists extends AppCompatActivity implements RateFavoriteDia
         mAlbum = (TextView) findViewById(R.id.album);
         mImage = (ImageView) findViewById(R.id.art);
 
+        // media player globals
+        mp = new MediaPlayer();
+        currentPlayingAlbum = null;
+
         // initial album
         try {
             generateAlbum();
             displayAlbum();
+            playSong(null);
         } catch (IOException | InterruptedException e) {
             e.printStackTrace();
         }
-
-        // media player globals
-        mp = new MediaPlayer();
-        mpPosition = 0;
-        playSong(null);
 
         // initialize buttons
         createButtons();
 
         mp.setOnCompletionListener(new MediaPlayer.OnCompletionListener() {
             public void onCompletion(MediaPlayer mp) {
+                mpPosition = 0;
                 playButton.setImageResource(R.drawable.ic_action_play);
             }
         });
+    }
+
+    @Override
+    protected void onPause(){
+        super.onPause();
+        mp.stop();
     }
 
     @Override
@@ -118,6 +126,7 @@ public class ShuffleArtists extends AppCompatActivity implements RateFavoriteDia
         super.onResume();
         Intent intent = getIntent();
         city = intent.getStringExtra("city");
+        mp.pause();
         Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
         toolbar.setTitle(city);
     }
@@ -158,8 +167,8 @@ public class ShuffleArtists extends AppCompatActivity implements RateFavoriteDia
                     mImage.setImageResource(android.R.color.transparent);
                     generateAlbum();
                     displayAlbum();
-                    mpPosition = 0;
                     playSong(null);
+
                 } catch (IOException | InterruptedException e) {
                     e.printStackTrace();
                 }
@@ -228,30 +237,37 @@ public class ShuffleArtists extends AppCompatActivity implements RateFavoriteDia
     }
 
     public void playSong(View view){
+        Log.d(TAG, "0");
         if (currentPlayingAlbum == null){
+            Log.d(TAG, "1");
             Parse parse = new Parse();
             parse.execute(thisAlbum);
             currentPlayingAlbum = thisAlbum;
         }
-        else if (!currentPlayingAlbum.getAlbumName().equals(thisAlbum.getAlbumName())){
+        else if (currentPlayingAlbum.equals(thisAlbum)){
+            if (mp.isPlaying()) {
+                Log.d(TAG, "3");
+                mpPosition = mp.getCurrentPosition();
+                mp.pause();
+            } else if (mpPosition == 0) {
+                Log.d(TAG, "4");
+                Parse parse = new Parse();
+                parse.execute(thisAlbum);
+                currentPlayingAlbum = thisAlbum;
+            } else {
+                Log.d(TAG, "5");
+                mp.seekTo(mpPosition);
+                mp.start();
+            }
+        }
+        else {
+            Log.d(TAG, "2");
             mp.pause();
             Parse parse = new Parse();
             parse.execute(thisAlbum);
             currentPlayingAlbum = thisAlbum;
         }
-        else {
-            if (mp.isPlaying()) {
-                mpPosition = mp.getCurrentPosition();
-                mp.pause();
-            } else if (mpPosition == 0) {
-                Parse parse = new Parse();
-                parse.execute(thisAlbum);
-                currentPlayingAlbum = thisAlbum;
-            } else {
-                mp.seekTo(mpPosition);
-                mp.start();
-            }
-        }
+        Log.d(TAG, currentPlayingAlbum.getAlbumName()+ " "+ thisAlbum.getAlbumName());
     }
 
     // display album on page
@@ -363,7 +379,7 @@ public class ShuffleArtists extends AppCompatActivity implements RateFavoriteDia
                     return clip;
                 } else {
                     Log.d(TAG, "artist" + album.getArtistName());
-                    search = new URL("http://api.deezer.com/search?q=artist:\"" + album.getArtistName().toLowerCase() + "&output=xml");
+                    search = new URL("http://api.deezer.com/search?q=artist:\"" + album.getArtistName().toLowerCase() + "\"&output=xml");
                     s = search.openConnection().getInputStream();
                     parser = new DeezerXMLParser();
                     url = parser.parse(s);
@@ -385,6 +401,7 @@ public class ShuffleArtists extends AppCompatActivity implements RateFavoriteDia
 
         protected void onPostExecute(String result){
             if (result == null){
+                mp.reset();
                 Toast.makeText(ShuffleArtists.context, "Album cannot be found. Please try next album.", Toast.LENGTH_SHORT).show();
                 playButton.setImageResource(R.drawable.ic_action_play);
                 return;
