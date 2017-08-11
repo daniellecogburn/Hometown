@@ -110,9 +110,12 @@ public class ShuffleArtists extends AppCompatActivity implements RateFavoriteDia
         mp.setOnCompletionListener(new MediaPlayer.OnCompletionListener() {
             public void onCompletion(MediaPlayer mp) {
                 mpPosition = 0;
-                playButton.setImageResource(R.drawable.ic_action_play);
+                //playButton.setImageResource(R.drawable.ic_action_play);
             }
         });
+
+        playButton.setImageResource(R.drawable.ic_action_pause);
+
     }
 
     @Override

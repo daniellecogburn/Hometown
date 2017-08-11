@@ -146,7 +146,7 @@ public class Saved extends AppCompatActivity {
             public void onClick(DialogInterface dialog, int id) {
                 FirebaseUser user = FirebaseAuth.getInstance().getCurrentUser();
                 String uid = user.getUid();
-                mDatabase.child("users").child(uid).child("saved").child(innerAlbum.getAlbumName() + " - " + innerAlbum.getArtistName()).removeValue();
+                mDatabase.child("users").child(uid).child("save").child(innerAlbum.getAlbumName() + " - " + innerAlbum.getArtistName()).removeValue();
                 int ind = saveAlbumList.indexOf(innerAlbum);
                 Log.d(TAG, String.valueOf(ind));
                 saveAlbumList.remove(ind);
@@ -199,9 +199,7 @@ public class Saved extends AppCompatActivity {
             Bitmap bmp = null;
             try {
                 bmp = albumUrl.execute(urlStr).get();
-            } catch (InterruptedException e) {
-                e.printStackTrace();
-            } catch (ExecutionException e) {
+            } catch (InterruptedException | ExecutionException e) {
                 e.printStackTrace();
             }
             imageView.setImageBitmap(bmp);
