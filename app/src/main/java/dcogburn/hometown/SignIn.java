@@ -26,6 +26,7 @@ public class SignIn extends AppCompatActivity implements View.OnClickListener {
     private EditText editTextEmail;
     private EditText editTextPassword;
     private TextView textViewSignup;
+    private TextView forgotPassword;
 
     private FirebaseAuth firebaseAuth;
 
@@ -51,9 +52,11 @@ public class SignIn extends AppCompatActivity implements View.OnClickListener {
         editTextPassword = (EditText) findViewById(R.id.editTextPassword);
         buttonSignIn = (Button) findViewById(R.id.buttonSignin);
         textViewSignup = (TextView) findViewById(R.id.textViewSignUp);
+        forgotPassword = (TextView) findViewById(R.id.forgotPassword);
 
         buttonSignIn.setOnClickListener(this);
         textViewSignup.setOnClickListener(this);
+        forgotPassword.setOnClickListener(this);
     }
 
     private void userLogin() {
@@ -95,6 +98,35 @@ public class SignIn extends AppCompatActivity implements View.OnClickListener {
 
     }
 
+    private void resetPassword() {
+        String email = editTextEmail.getText().toString().trim();
+
+        if (TextUtils.isEmpty(email)) {
+            //email is empty
+            Toast.makeText(this, "Please enter email", Toast.LENGTH_SHORT).show();
+            //Stop from executing
+            return;
+        }
+
+        progressDialog.setMessage("Checking for email..");
+        progressDialog.show();
+
+        FirebaseAuth.getInstance().sendPasswordResetEmail(email)
+                .addOnCompleteListener(new OnCompleteListener<Void>() {
+                    @Override
+                    public void onComplete(@NonNull Task<Void> task) {
+                        progressDialog.dismiss();
+                        if (task.isSuccessful()) {
+                            Toast.makeText(SignIn.this, "Email sent", Toast.LENGTH_LONG).show();
+                        }
+                        else {
+                            Toast.makeText(SignIn.this, "Not valid", Toast.LENGTH_LONG).show();
+                        }
+                    }
+                });
+
+    }
+
     @Override
     public void onClick (View view) {
         if (view == buttonSignIn) {
@@ -103,6 +135,9 @@ public class SignIn extends AppCompatActivity implements View.OnClickListener {
         if (view == textViewSignup) {
             finish();
             startActivity(new Intent(this, RegisterUser.class));
+        }
+        if (view == forgotPassword) {
+            resetPassword();
         }
     }
 }

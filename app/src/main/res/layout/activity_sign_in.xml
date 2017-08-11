@@ -59,6 +59,14 @@
             android:text="Don't have an account? Sign up here"
             android:textAlignment="center" />
 
+        <TextView
+            android:id="@+id/forgotPassword"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:paddingTop="25dp"
+            android:text="Forgot your password? Enter your email and tap here"
+            android:textAlignment="center" />
+
 
     </LinearLayout>
 
